@@ -16,6 +16,9 @@ type TemplateRoot struct {
 	Revision    uint
 	Git         *TemplateGit
 	FileName    string
+	Major       uint
+	Minor       uint
+	Patch       uint
 }
 
 type TemplateGit struct {

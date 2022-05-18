@@ -6,35 +6,105 @@ package cmd
 
 import (
 	"fmt"
+	"strconv"
 
+	"github.com/Masterminds/semver/v3"
 	"github.com/spf13/cobra"
+	"github.com/thediveo/enumflag"
+	build_counter "github.krafton.com/sbx/version-maker/pkg/modules/build-counter"
+	"github.krafton.com/sbx/version-maker/pkg/modules/versions"
+	meta_resolver_service "github.krafton.com/sbx/version-maker/pkg/services/meta-resolver-service"
+	"go.uber.org/zap"
 )
 
-// setCmd represents the set command
-var setCmd = &cobra.Command{
-	Use:   "set",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+func newClientSetCommand() *cobra.Command {
+	var (
+		tmplFile string
+		genDir   string
+		genFile  string
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("set called")
-	},
+		project string
+
+		ciHint meta_resolver_service.CiFlag
+
+		baseVersion *semver.Version
+		count       uint
+	)
+
+	cmd := &cobra.Command{
+		Use:   "set",
+		Short: "Client Set 버전 생성",
+		Args: cobra.MatchAll(
+			cobra.ExactArgs(2),
+			func(cmd *cobra.Command, args []string) error {
+				// Set BaseVersion
+				version, err := semver.StrictNewVersion(args[0])
+				if err != nil {
+					return err
+				}
+				if version.Prerelease() != "" || version.Metadata() != "" {
+					return fmt.Errorf("UnexpectedVersion: Version should have only baseVersion")
+				}
+				baseVersion = version
+
+				// Set Count
+				if i, err := strconv.ParseUint(args[1], 10, 64); err != nil {
+					return err
+				} else {
+					count = uint(i)
+				}
+				return nil
+			}),
+		Example: "versionhelper client set 0.3.23 231",
+	}
+
+	cmd.Flags().VarP(enumflag.New(&ciHint, "CI 이름", meta_resolver_service.CiFlags, enumflag.EnumCaseInsensitive),
+		"ci-hint", "c", "CI 힌트")
+
+	cmd.Flags().StringVar(&project, "project", "client", "Project Name")
+
+	cmd.Flags().StringVarP(&tmplFile, "tmpl-file", "t", "embed:///client.yaml", "Template File Url (embded:///PATH, ./PATH or file:///PATH)")
+	cmd.Flags().StringVar(&genDir, "gen-dir", "", "Generated file output dir")
+	cmd.Flags().StringVar(&genFile, "gen-file", "version.yaml", "Version Metadata File Name (json or yaml)")
+
+	cmd.Run = func(cmd *cobra.Command, args []string) {
+		/**	Steps
+		- Get Metadata
+		- Create Static Counter
+		- Create Version
+		- Templating Output and Save
+		*/
+
+		// Get Metadata
+		metadata, errored := clientGetMetadataStep(ciHint)
+		if errored {
+			return
+		}
+
+		// Create Counter
+		counter := build_counter.NewMemoryCounter(count)
+		zap.S().Debugf("Use Counter: %s", counter.String())
+
+		// Create Version
+		version, err := versions.NewDetailedSbxVersion(baseVersion, metadata.Branch, metadata.CommitSha, counter, true)
+		if err != nil {
+			zap.S().Infof("Create Sbx Version Failed, error: %s", err.Error())
+			SetExitCode(ExitCodeError)
+			return
+		}
+		zap.S().Debugf("Version: %s", version.String())
+		fmt.Println(version.String())
+
+		// Templating Output and Save
+		errored = clientTemplatingOutput(tmplFile, genDir, genFile, project, metadata, version)
+		if errored {
+			return
+		}
+	}
+
+	return cmd
 }
 
 func init() {
-	clientCmd.AddCommand(setCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// setCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// setCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	clientCmd.AddCommand(newClientSetCommand())
 }

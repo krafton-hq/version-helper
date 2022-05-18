@@ -56,6 +56,18 @@ func NewDetailedSbxVersion(baseVersion *semver.Version, branch string, commitSha
 	return version, nil
 }
 
+func (v *SbxVersion) Major() uint {
+	return v.major
+}
+
+func (v *SbxVersion) Minor() uint {
+	return v.minor
+}
+
+func (v *SbxVersion) Patch() uint {
+	return v.patch
+}
+
 func (v *SbxVersion) String() string {
 	var buf bytes.Buffer
 
@@ -106,5 +118,5 @@ func (v *SbxVersion) ToSemver() (*semver.Version, error) {
 }
 
 func MangleBranch(branch string) string {
-	return strings.ReplaceAll(branch, "/", "-")
+	return strings.ReplaceAll(strings.ToLower(branch), "/", "-")
 }

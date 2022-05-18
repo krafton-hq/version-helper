@@ -84,6 +84,9 @@ func (s *Service) GenerateAndSave(version versions.Version, metadata *metadata_r
 		BaseVersion: version.BaseVersion(),
 		Revision:    version.Revision(),
 		FileName:    s.TemplateFilePath,
+		Major:       version.Major(),
+		Minor:       version.Minor(),
+		Patch:       version.Patch(),
 		Git: &templates.TemplateGit{
 			Repository: metadata.Repository,
 			Commit:     metadata.CommitSha,

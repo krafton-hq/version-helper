@@ -1,5 +1,5 @@
 apiVersion: version.sbx-central.io/v1alpha1
-kind: ServerVersion
+kind: ClientVersion
 metadata:
   name: {{ .Version }}
   project: {{ .Project }}

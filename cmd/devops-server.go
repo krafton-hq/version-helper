@@ -13,7 +13,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func newDevOpsCommand() *cobra.Command {
+func newDevOpsServerCommand(teamName string) *cobra.Command {
 	var (
 		tmplFile string
 		genDir   string
@@ -30,8 +30,8 @@ func newDevOpsCommand() *cobra.Command {
 	)
 
 	cmd := &cobra.Command{
-		Use:   "devops",
-		Short: "A brief description of your command",
+		Use:   teamName,
+		Short: fmt.Sprintf("%s 버전 생성", teamName),
 	}
 
 	cmd.Flags().VarP(enumflag.New(&ciHint, "CI 이름", meta_resolver_service.CiFlags, enumflag.EnumCaseInsensitive),
@@ -45,7 +45,7 @@ func newDevOpsCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&overrideProject, "override-project", "", "Override Project Name (default use repository name)")
 
-	cmd.Flags().StringVarP(&tmplFile, "tmpl-file", "t", "embed:///devops.yaml", "Template File Url (embded:///PATH, ./PATH or file:///PATH)")
+	cmd.Flags().StringVarP(&tmplFile, "tmpl-file", "t", fmt.Sprintf("embed:///%s.yaml", teamName), "Template File Url (embded:///PATH, ./PATH or file:///PATH)")
 	cmd.Flags().StringVar(&genDir, "gen-dir", "", "Generated file output dir")
 	cmd.Flags().StringVar(&genFile, "gen-file", "version.yaml", "Version Metadata File Name (json or yaml)")
 	cmd.Run = func(cmd *cobra.Command, args []string) {
@@ -124,5 +124,6 @@ func newDevOpsCommand() *cobra.Command {
 }
 
 func init() {
-	rootCmd.AddCommand(newDevOpsCommand())
+	rootCmd.AddCommand(newDevOpsServerCommand("devops"))
+	rootCmd.AddCommand(newDevOpsServerCommand("server"))
 }
