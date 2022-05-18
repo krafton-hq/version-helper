@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/thediveo/enumflag"
+	log_helper "github.krafton.com/sbx/version-helper/pkg/log-helper"
 	build_counter "github.krafton.com/sbx/version-helper/pkg/modules/build-counter"
 	"github.krafton.com/xtrm/fox/client/fox_grpc"
 )
@@ -47,6 +48,8 @@ func NewCounter(option *Option) (build_counter.Counter, error) {
 			foxConfig.GrpcEndpoint = option.FoxAddr
 			foxConfig.WithTls = option.FoxDialTls
 		}
+		foxConfig.ClientInterceptors = log_helper.GetUnaryClientInterceptors()
+
 		foxClient, err := fox_grpc.NewClient(foxConfig)
 		if err != nil {
 			return nil, err

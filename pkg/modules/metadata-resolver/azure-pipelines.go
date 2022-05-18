@@ -13,9 +13,10 @@ type AzpResolver struct {
 }
 
 const (
-	azpCheckEnv  = "SYSTEM_COLLECTIONURI"
-	azpBranchEnv = "BUILD_SOURCEBRANCH"
-	azpCommitEnv = "BUILD_SOURCEVERSION"
+	azpCheckEnv   = "SYSTEM_COLLECTIONURI"
+	azpBranchEnv  = "BUILD_SOURCEBRANCH"
+	azpCommitEnv  = "BUILD_SOURCEVERSION"
+	azpRepoUrlEnv = "BUILD_REPOSITORY_URI"
 )
 
 func (r *AzpResolver) String() string {
@@ -48,10 +49,16 @@ func (r *AzpResolver) ResolveBuildMetadata() (*BuildMetadata, error) {
 		return nil, errors.New(fmt.Sprintf("SemverParseError: %s", err.Error()))
 	}
 
+	repo, err := git.GetRepositoryFromEnv(azpRepoUrlEnv)
+	if err != nil {
+		return nil, errors.New(fmt.Sprintf("RepositoryParseError: %s", err.Error()))
+	}
+
 	meta := &BuildMetadata{
 		Branch:      branch,
 		CommitSha:   commitSha,
 		LastVersion: lastVersion,
+		Repository:  repo,
 	}
 	return meta, nil
 }

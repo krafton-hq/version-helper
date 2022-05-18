@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"strconv"
 
 	"github.krafton.com/xtrm/fox/client/fox_grpc"
 	"github.krafton.com/xtrm/fox/core/generated/protos"
@@ -63,8 +62,26 @@ func (c *FoxCounter) Get(ctx context.Context) (uint, error) {
 		Id:             c.name,
 		ServiceProject: c.foxServiceProject,
 	})
-	err = checkRpcError(res, err)
-	if err != nil {
+	if checkRpcNotExists(res) {
+		res, err := c.foxClient.CreateDocument(ctx, &protos.CreateDocumentReq{
+			Document: &protos.Document{
+				Id:         c.name,
+				RawData:    "{\"count\": 1}",
+				DataType:   "map",
+				ApiVersion: "version.sbx-central.io/v1alpha1",
+				Kind:       "Counter",
+			},
+			ServiceProject: c.foxServiceProject,
+		})
+		if err := checkCommonRpcError(res, err); err != nil {
+			return 0, fmt.Errorf("GetFailed: %s", err.Error())
+		}
+
+		c.cachedCount = 1
+		return c.cachedCount, nil
+	}
+
+	if err := checkRpcError(res, err); err != nil {
 		return 0, fmt.Errorf("GetFailed: %s", err.Error())
 	}
 
@@ -77,37 +94,47 @@ func (c *FoxCounter) Get(ctx context.Context) (uint, error) {
 	return count, nil
 }
 
+type countData struct {
+	Count uint `json:"count"`
+}
+
 func (c *FoxCounter) getCountFromDocument(document *protos.DetailedDocument) (uint, error) {
 	if document == nil {
 		return 0, fmt.Errorf("InvalidParameters: 'document' should not be null")
 	}
 
-	rawStruct := map[string]interface{}{}
-	err := json.Unmarshal([]byte(document.Document.RawData), &rawStruct)
+	countStruct := &countData{}
+	err := json.Unmarshal([]byte(document.Document.RawData), &countStruct)
 	if err != nil {
 		return 0, fmt.Errorf("JsonParseError: %s", err.Error())
 	}
 
-	if value, ok := rawStruct["count"]; ok {
-		count, err := strconv.ParseUint(value.(string), 10, strconv.IntSize)
-		if err != nil {
-			return 0, err
-		}
-		return uint(count), nil
-	} else {
-		return 0, fmt.Errorf("InvalidDataFormat: 'count' field does not exists in data, '%s'", document.Document.RawData)
-	}
+	return countStruct.Count, nil
 }
 
 func checkRpcError(res *protos.DocumentRes, err error) error {
 	if err != nil {
 		return fmt.Errorf("gRPC Internal Error: %s", err.Error())
 	}
-	if res.CommonRes == nil {
+	if res == nil {
+		return fmt.Errorf("UnexpectedResponse: gRPC res is null")
+	}
+	return checkCommonRpcError(res.CommonRes, err)
+}
+
+func checkCommonRpcError(res *protos.CommonRes, err error) error {
+	if err != nil {
+		return fmt.Errorf("gRPC Internal Error: %s", err.Error())
+	}
+	if res == nil {
 		return fmt.Errorf("UnexpectedResponse: gRPC CommonRes is null")
 	}
-	if res.CommonRes.Status != protos.ResultCode_SUCCESS {
-		return fmt.Errorf("UnexpectedResponse: %s", res.CommonRes.Message)
+	if res.Status != protos.ResultCode_SUCCESS {
+		return fmt.Errorf("UnexpectedResponse: %s", res.Message)
 	}
 	return nil
+}
+
+func checkRpcNotExists(res *protos.DocumentRes) bool {
+	return res != nil && res.CommonRes != nil && res.CommonRes.Status == protos.ResultCode_NOT_FOUND
 }

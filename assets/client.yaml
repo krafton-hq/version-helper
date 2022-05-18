@@ -6,6 +6,7 @@ metadata:
   baseVersion: {{ .BaseVersion }}
   revision: {{ .Revision }}
 spec:
+  generatedTag: {{ .Git.Branch }}/{{ .BaseVersion }}/{{ .Revision }}
   gitRef:
     repository: {{ .Git.Repository }}
     commit: {{ .Git.Commit }}
