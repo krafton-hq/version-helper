@@ -1,0 +1,5 @@
+package fox
+
+func main() {
+
+}

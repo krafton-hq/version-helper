@@ -1,0 +1,13 @@
+apiVersion: version.sbx-central.io/v1alpha1
+kind: DevopsVersion
+metadata:
+  name: {{ .Version }}
+  project: {{ .Project }}
+  baseVersion: {{ .BaseVersion }}
+  revision: {{ .Revision }}
+spec:
+  gitRef:
+    repository: {{ .Git.Repository }}
+    commit: {{ .Git.Commit }}
+    branch: {{ .Git.Branch }}
+  artifacts: []

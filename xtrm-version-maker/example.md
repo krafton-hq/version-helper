@@ -31,6 +31,7 @@ version-maker -raise=3 -commithash=23decab... -commitver=3 -generate=header.h -d
 # 옵션 파라미터
 ```sh
 -chdir=<path> #workdir 변경
+
 -isquiet=true|false #결과 출력할 때 버전만 STDOUT으로 출력
 -last=true|false #true면 이전 버전만 출력하고 종료
 -redis=<addr> # raise하거나 가져오거나 저장할 때 사용할 redis 주소

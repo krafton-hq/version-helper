@@ -1,0 +1,13 @@
+apiVersion: version.sbx-central.io/v1alpha1
+kind: DevopsVersion
+metadata:
+  name: 0.0.1-feature-core.28e8eba
+  project: version-maker
+  baseVersion: 0.0.1
+  revision: 8
+spec:
+  gitRef:
+    repository: version-maker
+    commit: 28e8ebae57aaaa9aa2a0b013c8bf2abef393ef83
+    branch: feature/core
+  artifacts: []
