@@ -15,6 +15,10 @@ jobs:
         uses: actions/setup-go@v2
         with:
           go-version: 1.18
+      - name: Login GHES
+        run: |
+          set -eux
+          echo "machine github.krafton.com login sbx-cicd-bot password ${{ secrets.DEVOPS_GITHUB_TOKEN }}" >> ~/.netrc
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2
         with:
