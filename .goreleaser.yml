@@ -1,0 +1,36 @@
+before:
+  hooks:
+    - go mod tidy
+builds:
+  - binary: versionhelper
+    main: main.go
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+    ignore:
+      - goos: darwin
+        goarch: 386
+    ldflags:
+      - -s -w -X github.krafton.com/sbx/version-helper/pkg/consts.version=v{{.Version}}
+
+archives:
+  - format: tar.gz
+    name_template: |-
+      versionhelper_{{ .Tag }}_{{ .Os }}_{{ .Arch -}}
+    format_overrides:
+      - goos: windows
+        format: zip
+checksum:
+  name_template: "checksums.txt"
+  algorithm: sha256
+github_urls:
+  api: https://github.krafton.com/api/v3/
+  upload: https://github.krafton.com/api/uploads/
+  download: https://github.krafton.com/
+  skip_tls_verify: false

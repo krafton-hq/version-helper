@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	log_helper "github.krafton.com/sbx/version-maker/pkg/log-helper"
+	log_helper "github.krafton.com/sbx/version-helper/pkg/log-helper"
 )
 
 func TestLocalResolver_ResolveBuildMetadata(t *testing.T) {

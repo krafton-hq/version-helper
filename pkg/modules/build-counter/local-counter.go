@@ -9,7 +9,7 @@ import (
 	"os"
 	"path/filepath"
 
-	path_utils "github.krafton.com/sbx/version-maker/pkg/modules/path-utils"
+	path_utils "github.krafton.com/sbx/version-helper/pkg/modules/path-utils"
 	"go.uber.org/zap"
 )
 

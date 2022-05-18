@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/thediveo/enumflag"
-	build_counter "github.krafton.com/sbx/version-maker/pkg/modules/build-counter"
+	build_counter "github.krafton.com/sbx/version-helper/pkg/modules/build-counter"
 	"github.krafton.com/xtrm/fox/client/fox_grpc"
 )
 

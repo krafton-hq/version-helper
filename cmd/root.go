@@ -4,7 +4,8 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
-	log_helper "github.krafton.com/sbx/version-maker/pkg/log-helper"
+	"github.krafton.com/sbx/version-helper/pkg/consts"
+	log_helper "github.krafton.com/sbx/version-helper/pkg/log-helper"
 	"go.uber.org/zap"
 )
 
@@ -18,11 +19,14 @@ func Execute() {
 }
 
 var rootCmd = &cobra.Command{
-	Use:   "versionhelper",
-	Short: "A brief description of your application",
+	Use:     "versionhelper",
+	Short:   "A brief description of your application",
+	Version: consts.Version(),
 }
 
 func init() {
+	rootCmd.SetVersionTemplate("version-helper: {{ .Version }}\n")
+
 	var debug bool
 	var jsonLog bool
 	rootCmd.PersistentFlags().BoolVar(&debug, "debug", false, "Flag to Print Debug Message")

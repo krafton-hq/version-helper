@@ -10,9 +10,9 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/thediveo/enumflag"
-	"github.krafton.com/sbx/version-maker/pkg/modules/versions"
-	counter_service "github.krafton.com/sbx/version-maker/pkg/services/counter-service"
-	meta_resolver_service "github.krafton.com/sbx/version-maker/pkg/services/meta-resolver-service"
+	"github.krafton.com/sbx/version-helper/pkg/modules/versions"
+	counter_service "github.krafton.com/sbx/version-helper/pkg/services/counter-service"
+	meta_resolver_service "github.krafton.com/sbx/version-helper/pkg/services/meta-resolver-service"
 	"go.uber.org/zap"
 )
 

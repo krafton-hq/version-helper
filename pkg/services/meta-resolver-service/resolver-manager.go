@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/thediveo/enumflag"
-	metadata_resolver "github.krafton.com/sbx/version-maker/pkg/modules/metadata-resolver"
+	metadata_resolver "github.krafton.com/sbx/version-helper/pkg/modules/metadata-resolver"
 	"go.uber.org/zap"
 )
 

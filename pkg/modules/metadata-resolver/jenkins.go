@@ -6,7 +6,7 @@ import (
 	"os"
 
 	"github.com/Masterminds/semver/v3"
-	"github.krafton.com/sbx/version-maker/pkg/modules/git"
+	"github.krafton.com/sbx/version-helper/pkg/modules/git"
 )
 
 type JenkinsResolver struct {

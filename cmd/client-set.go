@@ -11,9 +11,9 @@ import (
 	"github.com/Masterminds/semver/v3"
 	"github.com/spf13/cobra"
 	"github.com/thediveo/enumflag"
-	build_counter "github.krafton.com/sbx/version-maker/pkg/modules/build-counter"
-	"github.krafton.com/sbx/version-maker/pkg/modules/versions"
-	meta_resolver_service "github.krafton.com/sbx/version-maker/pkg/services/meta-resolver-service"
+	build_counter "github.krafton.com/sbx/version-helper/pkg/modules/build-counter"
+	"github.krafton.com/sbx/version-helper/pkg/modules/versions"
+	meta_resolver_service "github.krafton.com/sbx/version-helper/pkg/services/meta-resolver-service"
 	"go.uber.org/zap"
 )
 

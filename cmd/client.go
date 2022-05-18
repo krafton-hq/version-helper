@@ -6,10 +6,10 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
-	metadata_resolver "github.krafton.com/sbx/version-maker/pkg/modules/metadata-resolver"
-	"github.krafton.com/sbx/version-maker/pkg/modules/versions"
-	generate_service "github.krafton.com/sbx/version-maker/pkg/services/generate-service"
-	meta_resolver_service "github.krafton.com/sbx/version-maker/pkg/services/meta-resolver-service"
+	metadata_resolver "github.krafton.com/sbx/version-helper/pkg/modules/metadata-resolver"
+	"github.krafton.com/sbx/version-helper/pkg/modules/versions"
+	generate_service "github.krafton.com/sbx/version-helper/pkg/services/generate-service"
+	meta_resolver_service "github.krafton.com/sbx/version-helper/pkg/services/meta-resolver-service"
 	"go.uber.org/zap"
 )
 
