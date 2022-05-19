@@ -7,6 +7,7 @@ import (
 
 	"github.com/Masterminds/semver/v3"
 	"github.krafton.com/sbx/version-helper/pkg/modules/git"
+	"go.uber.org/zap"
 )
 
 type JenkinsResolver struct {
@@ -65,7 +66,8 @@ func (r *JenkinsResolver) ResolveBuildMetadata() (*BuildMetadata, error) {
 
 func GetMultipleEnv(envs []string) string {
 	for _, env := range envs {
-		if value, exists := os.LookupEnv(env); exists {
+		if value, exists := os.LookupEnv(env); exists && value != "" {
+			zap.S().Debugf("Found env %s=%s", env, value)
 			return value
 		}
 	}

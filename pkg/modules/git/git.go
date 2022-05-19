@@ -58,8 +58,9 @@ func NormalizeBranch(branch string) string {
 		return strings.TrimPrefix("refs/heads/", branch)
 	} else if strings.Contains(branch, "refs/pull/") {
 		return strings.TrimPrefix("refs/pull/", branch)
+	} else {
+		return branch
 	}
-	return branch
 }
 
 func GetRemoteUrl() (string, error) {
