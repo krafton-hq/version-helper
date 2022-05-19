@@ -68,6 +68,14 @@ func (v *SbxVersion) Patch() uint {
 	return v.patch
 }
 
+func (v *SbxVersion) Branch() string {
+	return MangleBranch(v.branch)
+}
+
+func (v *SbxVersion) Commit() string {
+	return v.commitSha
+}
+
 func (v *SbxVersion) String() string {
 	var buf bytes.Buffer
 

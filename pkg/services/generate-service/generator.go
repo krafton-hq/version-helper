@@ -79,14 +79,18 @@ func (s *Service) GenerateAndSave(version versions.Version, metadata *metadata_r
 	}
 
 	values := &templates.TemplateRoot{
-		Version:     version.String(),
-		Project:     project,
-		BaseVersion: version.BaseVersion(),
-		Revision:    version.Revision(),
-		FileName:    s.TemplateFilePath,
-		Major:       version.Major(),
-		Minor:       version.Minor(),
-		Patch:       version.Patch(),
+		Version: &templates.TemplateVersion{
+			FullVersion: version.String(),
+			BaseVersion: version.BaseVersion(),
+			PreRelease:  version.PreRelease(),
+			Major:       version.Major(),
+			Minor:       version.Minor(),
+			Patch:       version.Patch(),
+			Branch:      version.Branch(),
+			Revision:    version.Revision(),
+			Commit:      version.Commit(),
+		},
+		Project: project,
 		Git: &templates.TemplateGit{
 			Repository: metadata.Repository,
 			Commit:     metadata.CommitSha,
@@ -94,7 +98,7 @@ func (s *Service) GenerateAndSave(version versions.Version, metadata *metadata_r
 		},
 	}
 
-	genData, err := templates.Template(tmpl, values)
+	genData, err := templates.Template(tmpl, s.TemplateFilePath, values)
 	if err != nil {
 		return err
 	}

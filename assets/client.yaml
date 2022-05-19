@@ -1,12 +1,12 @@
 apiVersion: version.sbx-central.io/v1alpha1
 kind: ClientVersion
 metadata:
-  name: {{ .Version }}
+  name: {{ .Version.FullVersion }}
   project: {{ .Project }}
-  baseVersion: {{ .BaseVersion }}
-  revision: {{ .Revision }}
+  baseVersion: {{ .Version.BaseVersion }}
+  revision: {{ .Version.Revision }}
 spec:
-  generatedTag: {{ .Git.Branch }}/{{ .BaseVersion }}/{{ .Revision }}
+  generatedTag: {{ .Git.Branch }}/{{ .Version.BaseVersion }}/{{ .Version.Revision }}
   gitRef:
     repository: {{ .Git.Repository }}
     commit: {{ .Git.Commit }}

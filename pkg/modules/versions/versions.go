@@ -8,12 +8,16 @@ import (
 
 type Version interface {
 	String() string
-	PreRelease() string
 	BaseVersion() string
-	Revision() uint
+	PreRelease() string
+
 	Major() uint
 	Minor() uint
 	Patch() uint
+	Branch() string
+	Revision() uint
+	Commit() string
+
 	Increase(ctx context.Context) error
 	ToSemver() (*semver.Version, error)
 }

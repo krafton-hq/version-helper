@@ -10,15 +10,22 @@ import (
 )
 
 type TemplateRoot struct {
-	Version     string
-	Project     string
+	Version *TemplateVersion
+	Git     *TemplateGit
+	Project string
+}
+
+type TemplateVersion struct {
+	FullVersion string
 	BaseVersion string
-	Revision    uint
-	Git         *TemplateGit
-	FileName    string
-	Major       uint
-	Minor       uint
-	Patch       uint
+	PreRelease  string
+
+	Major    uint
+	Minor    uint
+	Patch    uint
+	Branch   string
+	Revision uint
+	Commit   string
 }
 
 type TemplateGit struct {
@@ -27,12 +34,12 @@ type TemplateGit struct {
 	Branch     string
 }
 
-func Template(tmpl string, values *TemplateRoot) (string, error) {
+func Template(tmpl string, templateName string, values *TemplateRoot) (string, error) {
 	zap.S().Debug("Start Template with Sprig Function Map")
 	zap.S().Debugf("template: %s", tmpl)
 	zap.S().Debugw("", "values", values)
 
-	t := template.New(values.FileName).Funcs(sprig.TxtFuncMap())
+	t := template.New(templateName).Funcs(sprig.TxtFuncMap())
 	t, err := t.Parse(tmpl)
 	if err != nil {
 		zap.S().Debugf("Create Go Template Failed, error: %s", err.Error())

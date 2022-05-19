@@ -1,10 +1,10 @@
 apiVersion: version.sbx-central.io/v1alpha1
 kind: ServerVersion
 metadata:
-  name: {{ .Version }}
+  name: {{ .Version.FullVersion }}
   project: {{ .Project }}
-  baseVersion: {{ .BaseVersion }}
-  revision: {{ .Revision }}
+  baseVersion: {{ .Version.BaseVersion }}
+  revision: {{ .Version.Revision }}
 spec:
   gitRef:
     repository: {{ .Git.Repository }}
