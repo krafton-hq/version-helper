@@ -55,9 +55,9 @@ func GetRepository() (string, error) {
 
 func NormalizeBranch(branch string) string {
 	if strings.Contains(branch, "refs/heads/") {
-		return strings.TrimPrefix("refs/heads/", branch)
+		return strings.TrimPrefix(branch, "refs/heads/")
 	} else if strings.Contains(branch, "refs/pull/") {
-		return strings.TrimPrefix("refs/pull/", branch)
+		return strings.TrimPrefix(branch, "refs/pull/")
 	} else {
 		return branch
 	}
