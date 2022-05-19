@@ -20,7 +20,7 @@ const (
 	GhaRepoOwnerEnv = "GITHUB_REPOSITORY_OWNER"
 )
 
-var ghaBranchEnvs = []string{"GITHUB_BASE_REF", "GITHUB_REF_NAME"}
+var ghaBranchEnvs = []string{"GITHUB_BASE_REF", "GITHUB_REF_NAME", "GITHUB_REF"}
 
 func (r *GhaResolver) String() string {
 	return "GithubActions"
