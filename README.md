@@ -1,12 +1,15 @@
-# version-maker
+# version-helper
+
+----------------
 
 # Version Styles
-
 ## Client Team
 0.3.2-feature-charactermove.313.38cdcab
 
 # Server & DevOps Team
 0.3.2-feature-charactermove.38cdcab
+
+----------------
 
 # Commands
 ## Base Command
