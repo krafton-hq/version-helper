@@ -9,11 +9,11 @@ import (
 	"strconv"
 
 	"github.com/Masterminds/semver/v3"
+	build_counter "github.com/krafton-hq/version-helper/pkg/modules/build-counter"
+	"github.com/krafton-hq/version-helper/pkg/modules/versions"
+	meta_resolver_service "github.com/krafton-hq/version-helper/pkg/services/meta-resolver-service"
 	"github.com/spf13/cobra"
 	"github.com/thediveo/enumflag"
-	build_counter "github.krafton.com/sbx/version-helper/pkg/modules/build-counter"
-	"github.krafton.com/sbx/version-helper/pkg/modules/versions"
-	meta_resolver_service "github.krafton.com/sbx/version-helper/pkg/services/meta-resolver-service"
 	"go.uber.org/zap"
 )
 

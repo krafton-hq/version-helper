@@ -8,11 +8,11 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.krafton.com/sbx/version-helper/assets"
-	metadata_resolver "github.krafton.com/sbx/version-helper/pkg/modules/metadata-resolver"
-	path_utils "github.krafton.com/sbx/version-helper/pkg/modules/path-utils"
-	"github.krafton.com/sbx/version-helper/pkg/modules/templates"
-	"github.krafton.com/sbx/version-helper/pkg/modules/versions"
+	"github.com/krafton-hq/version-helper/assets"
+	metadata_resolver "github.com/krafton-hq/version-helper/pkg/modules/metadata-resolver"
+	path_utils "github.com/krafton-hq/version-helper/pkg/modules/path-utils"
+	"github.com/krafton-hq/version-helper/pkg/modules/templates"
+	"github.com/krafton-hq/version-helper/pkg/modules/versions"
 	"go.uber.org/zap"
 )
 

@@ -3,9 +3,9 @@ package cmd
 import (
 	"os"
 
+	"github.com/krafton-hq/version-helper/pkg/consts"
+	log_helper "github.com/krafton-hq/version-helper/pkg/log-helper"
 	"github.com/spf13/cobra"
-	"github.krafton.com/sbx/version-helper/pkg/consts"
-	log_helper "github.krafton.com/sbx/version-helper/pkg/log-helper"
 	"go.uber.org/zap"
 )
 

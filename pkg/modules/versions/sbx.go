@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/Masterminds/semver/v3"
-	build_counter "github.krafton.com/sbx/version-helper/pkg/modules/build-counter"
+	build_counter "github.com/krafton-hq/version-helper/pkg/modules/build-counter"
 )
 
 type SbxVersion struct {

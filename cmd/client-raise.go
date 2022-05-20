@@ -8,11 +8,11 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/krafton-hq/version-helper/pkg/modules/versions"
+	counter_service "github.com/krafton-hq/version-helper/pkg/services/counter-service"
+	meta_resolver_service "github.com/krafton-hq/version-helper/pkg/services/meta-resolver-service"
 	"github.com/spf13/cobra"
 	"github.com/thediveo/enumflag"
-	"github.krafton.com/sbx/version-helper/pkg/modules/versions"
-	counter_service "github.krafton.com/sbx/version-helper/pkg/services/counter-service"
-	meta_resolver_service "github.krafton.com/sbx/version-helper/pkg/services/meta-resolver-service"
 	"go.uber.org/zap"
 )
 

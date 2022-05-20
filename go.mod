@@ -1,4 +1,4 @@
-module github.krafton.com/sbx/version-helper
+module github.com/krafton-hq/version-helper
 
 go 1.18
 

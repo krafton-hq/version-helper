@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	metadata_resolver "github.krafton.com/sbx/version-helper/pkg/modules/metadata-resolver"
-	meta_resolver_service "github.krafton.com/sbx/version-helper/pkg/services/meta-resolver-service"
+	metadata_resolver "github.com/krafton-hq/version-helper/pkg/modules/metadata-resolver"
+	meta_resolver_service "github.com/krafton-hq/version-helper/pkg/services/meta-resolver-service"
 )
 
 var flagExitCode int = 0

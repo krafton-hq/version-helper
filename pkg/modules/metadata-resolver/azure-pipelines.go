@@ -6,7 +6,7 @@ import (
 	"os"
 
 	"github.com/Masterminds/semver/v3"
-	"github.krafton.com/sbx/version-helper/pkg/modules/git"
+	"github.com/krafton-hq/version-helper/pkg/modules/git"
 )
 
 type AzpResolver struct {

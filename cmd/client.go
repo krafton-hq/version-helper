@@ -5,11 +5,11 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	metadata_resolver "github.com/krafton-hq/version-helper/pkg/modules/metadata-resolver"
+	"github.com/krafton-hq/version-helper/pkg/modules/versions"
+	generate_service "github.com/krafton-hq/version-helper/pkg/services/generate-service"
+	meta_resolver_service "github.com/krafton-hq/version-helper/pkg/services/meta-resolver-service"
 	"github.com/spf13/cobra"
-	metadata_resolver "github.krafton.com/sbx/version-helper/pkg/modules/metadata-resolver"
-	"github.krafton.com/sbx/version-helper/pkg/modules/versions"
-	generate_service "github.krafton.com/sbx/version-helper/pkg/services/generate-service"
-	meta_resolver_service "github.krafton.com/sbx/version-helper/pkg/services/meta-resolver-service"
 	"go.uber.org/zap"
 )
 

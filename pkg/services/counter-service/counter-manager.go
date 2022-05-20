@@ -3,9 +3,9 @@ package counter_service
 import (
 	"fmt"
 
+	log_helper "github.com/krafton-hq/version-helper/pkg/log-helper"
+	build_counter "github.com/krafton-hq/version-helper/pkg/modules/build-counter"
 	"github.com/thediveo/enumflag"
-	log_helper "github.krafton.com/sbx/version-helper/pkg/log-helper"
-	build_counter "github.krafton.com/sbx/version-helper/pkg/modules/build-counter"
 	"github.krafton.com/xtrm/fox/client/fox_grpc"
 )
 
