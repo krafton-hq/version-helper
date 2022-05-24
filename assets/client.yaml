@@ -5,10 +5,12 @@ metadata:
   project: {{ .Project }}
   baseVersion: {{ .Version.BaseVersion }}
   revision: {{ .Version.Revision }}
+  labels:
+    generatedTag: {{ .Git.Branch }}/{{ .Version.BaseVersion }}/{{ .Version.Revision }}
 spec:
-  generatedTag: {{ .Git.Branch }}/{{ .Version.BaseVersion }}/{{ .Version.Revision }}
   gitRef:
     repository: {{ .Git.Repository }}
     commit: {{ .Git.Commit }}
     branch: {{ .Git.Branch }}
+status:
   artifacts: []

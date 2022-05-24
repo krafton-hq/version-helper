@@ -12,11 +12,11 @@
 ----------------
 
 # Commands
-## Base Command
+## Base Commands
 ```shell
 # Generate Version Metadata Client Team 
-$ versionmaker client raise
-$ versionmaker client set <semver> <count>
+$ versionhelper client raise
+$ versionhelper client set <semver> <count>
 # Client Specific Parameters
 --project : Project Name (default "client")
 --gen-header-file : Header Metadata File Name C++ header (default "GeneratedVersion.h")
@@ -25,14 +25,14 @@ $ versionmaker client set <semver> <count>
 -v, --tmpl-version-file : Template Version File Url (embded:///PATH, ./PATH or file:///PATH) (default "embed:///client.yaml")
 
 # Generate Version Metadata for Server Team 
-$ versionmaker server
+$ versionhelper server
 # Server Specific Parameters
 --override-project : Override Project Name (default is repository-name)
 --gen-file : Output File Name (default version.yaml)
 -t, --tmpl-file : Template File Url (embded:///PATH, ./PATH or file:///PATH) (default "embed:///server.yaml")
 
 # Generate Version Metadata for DevOps Team 
-$ versionmaker devops
+$ versionhelper devops
 # Server Specific Parameters
 --override-project : Override Project Name (default is repository-name) 
 --gen-file : Output File Name (default version.yaml)
@@ -51,4 +51,10 @@ $ versionmaker devops
 --counter-fox-addr : Network Counter gRPC Server Address (default "")
 --counter-fox-secure : Use Tls Flag to Connect Network Counter Server (default true)
 --gen-dir : Output Files Directory (default is same as workdirectory)
+```
+
+## Edit Metadata Commands
+```shell
+$ versionhelper metadata append --platform=<> --target=<> --artifact-type=<> --uri=<> [--file=<>]
+$ versionhelper metadata upload [--confilct-resolve-policy=<merge|overwrite> --conflict-retry=<int> --upload-fox-addr=<> --upload-fox-secure=<> --file=<>]
 ```

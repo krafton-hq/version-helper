@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 
+	fox_utils "github.com/krafton-hq/version-helper/pkg/modules/fox-utils"
 	"github.krafton.com/xtrm/fox/client/fox_grpc"
 	"github.krafton.com/xtrm/fox/core/generated/protos"
 )
@@ -38,7 +39,7 @@ func (c *FoxCounter) Increase(ctx context.Context) (uint, error) {
 		ServiceProject: c.foxServiceProject,
 		Expression:     ".count = .count + 1",
 	})
-	err = checkRpcError(res, err)
+	err = fox_utils.CheckRpcError(res, err)
 	if err != nil {
 		return 0, fmt.Errorf("IncraseFailed: %s", err.Error())
 	}
@@ -62,7 +63,7 @@ func (c *FoxCounter) Get(ctx context.Context) (uint, error) {
 		Id:             c.name,
 		ServiceProject: c.foxServiceProject,
 	})
-	if checkRpcNotExists(res) {
+	if fox_utils.CheckRpcNotExists(res) {
 		res, err := c.foxClient.CreateDocument(ctx, &protos.CreateDocumentReq{
 			Document: &protos.Document{
 				Id:         c.name,
@@ -73,7 +74,7 @@ func (c *FoxCounter) Get(ctx context.Context) (uint, error) {
 			},
 			ServiceProject: c.foxServiceProject,
 		})
-		if err := checkCommonRpcError(res, err); err != nil {
+		if err := fox_utils.CheckCommonRpcError(res, err); err != nil {
 			return 0, fmt.Errorf("GetFailed: %s", err.Error())
 		}
 
@@ -81,7 +82,7 @@ func (c *FoxCounter) Get(ctx context.Context) (uint, error) {
 		return c.cachedCount, nil
 	}
 
-	if err := checkRpcError(res, err); err != nil {
+	if err := fox_utils.CheckRpcError(res, err); err != nil {
 		return 0, fmt.Errorf("GetFailed: %s", err.Error())
 	}
 
@@ -110,31 +111,4 @@ func (c *FoxCounter) getCountFromDocument(document *protos.DetailedDocument) (ui
 	}
 
 	return countStruct.Count, nil
-}
-
-func checkRpcError(res *protos.DocumentRes, err error) error {
-	if err != nil {
-		return fmt.Errorf("gRPC Internal Error: %s", err.Error())
-	}
-	if res == nil {
-		return fmt.Errorf("UnexpectedResponse: gRPC res is null")
-	}
-	return checkCommonRpcError(res.CommonRes, err)
-}
-
-func checkCommonRpcError(res *protos.CommonRes, err error) error {
-	if err != nil {
-		return fmt.Errorf("gRPC Internal Error: %s", err.Error())
-	}
-	if res == nil {
-		return fmt.Errorf("UnexpectedResponse: gRPC CommonRes is null")
-	}
-	if res.Status != protos.ResultCode_SUCCESS {
-		return fmt.Errorf("UnexpectedResponse: %s", res.Message)
-	}
-	return nil
-}
-
-func checkRpcNotExists(res *protos.DocumentRes) bool {
-	return res != nil && res.CommonRes != nil && res.CommonRes.Status == protos.ResultCode_NOT_FOUND
 }

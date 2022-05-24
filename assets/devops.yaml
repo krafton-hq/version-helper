@@ -10,4 +10,5 @@ spec:
     repository: {{ .Git.Repository }}
     commit: {{ .Git.Commit }}
     branch: {{ .Git.Branch }}
+status:
   artifacts: []

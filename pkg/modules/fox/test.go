@@ -1,5 +1,0 @@
-package fox
-
-func main() {
-
-}

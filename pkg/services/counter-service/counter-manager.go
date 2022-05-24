@@ -3,10 +3,9 @@ package counter_service
 import (
 	"fmt"
 
-	log_helper "github.com/krafton-hq/version-helper/pkg/log-helper"
 	build_counter "github.com/krafton-hq/version-helper/pkg/modules/build-counter"
+	fox_utils "github.com/krafton-hq/version-helper/pkg/modules/fox-utils"
 	"github.com/thediveo/enumflag"
-	"github.krafton.com/xtrm/fox/client/fox_grpc"
 )
 
 type CounterFlag enumflag.Flag
@@ -43,18 +42,13 @@ func NewCounter(option *Option) (build_counter.Counter, error) {
 	case Local:
 		return build_counter.NewLocalCounter(option.LocalPath, option.Project)
 	case Network:
-		foxConfig := fox_grpc.DefaultConfig()
-		if option.FoxAddr != "" {
-			foxConfig.GrpcEndpoint = option.FoxAddr
-			foxConfig.WithTls = option.FoxDialTls
-		}
-		foxConfig.ClientInterceptors = log_helper.GetUnaryClientInterceptors()
-
-		foxClient, err := fox_grpc.NewClient(foxConfig)
+		foxClient, err := fox_utils.NewClient(&fox_utils.Option{
+			FoxAddr:    option.FoxAddr,
+			FoxDialTls: option.FoxDialTls,
+		})
 		if err != nil {
 			return nil, err
 		}
-
 		return build_counter.NewFoxCounter(option.Project, foxNamespace, foxClient), nil
 	default:
 		return nil, fmt.Errorf("UnknownCounterFlag, %v", option.Flag)
