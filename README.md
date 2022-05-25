@@ -12,7 +12,7 @@
 ----------------
 
 # Commands
-## Base Commands
+## Client Commands
 ```shell
 # Generate Version Metadata Client Team 
 $ versionhelper client raise
@@ -23,7 +23,10 @@ $ versionhelper client set <semver> <count>
 --gen-version-file : Version Metadata File Name (json or yaml) (default "version.yaml")
 -d, --tmpl-header-file : Template Header File Url (embded:///PATH, ./PATH or file:///PATH) (default "embed:///GeneratedVersion.h")
 -v, --tmpl-version-file : Template Version File Url (embded:///PATH, ./PATH or file:///PATH) (default "embed:///client.yaml")
+```
 
+## Server and DevOps Commands
+```shell
 # Generate Version Metadata for Server Team 
 $ versionhelper server
 # Server Specific Parameters
@@ -38,6 +41,7 @@ $ versionhelper devops
 --gen-file : Output File Name (default version.yaml)
 -t, --tmpl-file : Template File Url (embded:///PATH, ./PATH or file:///PATH) (default "embed:///devops.yaml")
 ```
+
 ## Parameters
 ```yaml
 --help : Help for versionhelper
