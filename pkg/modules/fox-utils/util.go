@@ -28,17 +28,17 @@ type Option struct {
 	FoxDialTls bool
 }
 
-func CheckRpcError(res *protos.DocumentRes, err error) error {
+func CheckDocumentResError(res *protos.DocumentRes, err error) error {
 	if err != nil {
 		return fmt.Errorf("gRPC Internal Error: %s", err.Error())
 	}
 	if res == nil {
 		return fmt.Errorf("UnexpectedResponse: gRPC res is null")
 	}
-	return CheckCommonRpcError(res.CommonRes, err)
+	return CheckCommonResError(res.CommonRes, err)
 }
 
-func CheckCommonRpcError(res *protos.CommonRes, err error) error {
+func CheckCommonResError(res *protos.CommonRes, err error) error {
 	if err != nil {
 		return fmt.Errorf("gRPC Internal Error: %s", err.Error())
 	}
