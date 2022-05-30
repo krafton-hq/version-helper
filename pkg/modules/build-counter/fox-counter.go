@@ -39,7 +39,7 @@ func (c *FoxCounter) Increase(ctx context.Context) (uint, error) {
 		ServiceProject: c.foxServiceProject,
 		Expression:     ".count = .count + 1",
 	})
-	err = fox_utils.CheckRpcError(res, err)
+	err = fox_utils.CheckDocumentResError(res, err)
 	if err != nil {
 		return 0, fmt.Errorf("IncraseFailed: %s", err.Error())
 	}
@@ -69,12 +69,12 @@ func (c *FoxCounter) Get(ctx context.Context) (uint, error) {
 				Id:         c.name,
 				RawData:    "{\"count\": 1}",
 				DataType:   "map",
-				ApiVersion: "version.sbx-central.io/v1alpha1",
+				ApiVersion: "versions.sbx-central.io/v1alpha1",
 				Kind:       "Counter",
 			},
 			ServiceProject: c.foxServiceProject,
 		})
-		if err := fox_utils.CheckCommonRpcError(res, err); err != nil {
+		if err := fox_utils.CheckCommonResError(res, err); err != nil {
 			return 0, fmt.Errorf("GetFailed: %s", err.Error())
 		}
 
@@ -82,7 +82,7 @@ func (c *FoxCounter) Get(ctx context.Context) (uint, error) {
 		return c.cachedCount, nil
 	}
 
-	if err := fox_utils.CheckRpcError(res, err); err != nil {
+	if err := fox_utils.CheckDocumentResError(res, err); err != nil {
 		return 0, fmt.Errorf("GetFailed: %s", err.Error())
 	}
 
