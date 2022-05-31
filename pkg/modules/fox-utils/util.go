@@ -6,6 +6,7 @@ import (
 	log_helper "github.com/krafton-hq/version-helper/pkg/log-helper"
 	"github.krafton.com/xtrm/fox/client/fox_grpc"
 	"github.krafton.com/xtrm/fox/core/generated/protos"
+	"go.uber.org/zap"
 )
 
 func NewClient(option *Option) (*fox_grpc.FoxClient, error) {
@@ -16,6 +17,7 @@ func NewClient(option *Option) (*fox_grpc.FoxClient, error) {
 	}
 	foxConfig.ClientInterceptors = log_helper.GetUnaryClientInterceptors()
 
+	zap.S().Debugf("Create Fox Client %#v", foxConfig)
 	foxClient, err := fox_grpc.NewClient(foxConfig)
 	if err != nil {
 		return nil, err
