@@ -45,7 +45,7 @@ func newDevOpsServerCommand(teamName string) *cobra.Command {
 
 	cmd.Flags().StringVar(&overrideProject, "override-project", "", "Override Project Name (default use repository name)")
 
-	cmd.Flags().StringVarP(&tmplFile, "tmpl-file", "t", fmt.Sprintf("embed:///%s.yaml", teamName), "Template File Url (embded:///PATH, ./PATH or file:///PATH)")
+	cmd.Flags().StringVarP(&tmplFile, "tmpl-file", "t", "embed:///version.yaml", "Template File Url (embded:///PATH, ./PATH or file:///PATH)")
 	cmd.Flags().StringVar(&genDir, "gen-dir", "", "Generated file output dir")
 	cmd.Flags().StringVar(&genFile, "gen-file", "version.yaml", "Version Metadata File Name (json or yaml)")
 	cmd.Run = func(cmd *cobra.Command, args []string) {

@@ -5,109 +5,124 @@ import (
 	"encoding/json"
 	"fmt"
 
-	fox_utils "github.com/krafton-hq/version-helper/pkg/modules/fox-utils"
-	"github.krafton.com/xtrm/fox/client/fox_grpc"
-	"github.krafton.com/xtrm/fox/core/generated/protos"
+	redfoxV1alpha1 "github.com/krafton-hq/red-fox/pkg/apis/redfox/v1alpha1"
+	redfoxClientset "github.com/krafton-hq/red-fox/pkg/generated/clientset/versioned"
+	"github.com/krafton-hq/version-helper/pkg/modules/versions"
 	"go.uber.org/zap"
-	"google.golang.org/protobuf/types/known/timestamppb"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/runtime/schema"
+	"k8s.io/apimachinery/pkg/types"
 )
 
 type Uploader struct {
-	client           *fox_grpc.FoxClient
-	namespace        string
-	conflictResolver ConflictResolver
-	retry            int
+	redfoxClient redfoxClientset.Interface
+	namespace    string
 }
 
-func NewUploader(client *fox_grpc.FoxClient, namespace string, conflictResolver ConflictResolver, retry int) *Uploader {
-	return &Uploader{client: client, namespace: namespace, conflictResolver: conflictResolver, retry: retry}
+func NewUploader(redfoxClient redfoxClientset.Interface, namespace string) *Uploader {
+	return &Uploader{redfoxClient: redfoxClient, namespace: namespace}
 }
 
-func (u *Uploader) Upload(ctx context.Context, obj *VersionObj) error {
-	// First Try
-	err := u.create(ctx, obj)
-	if err == nil {
-		return nil
-	}
-	zap.S().Debugw("Document Creation Conflicts to Remote Server", "object", obj, "error", err.Error())
+const versionHelperManager = "version-helper-cli"
 
-	// Since Second Try
-	for i := 1; i < u.retry; i++ {
-		zap.S().Debugf("#%d Try to Resolve Conflict Resolver: %s", i, u.conflictResolver.String())
-		resolvedObj, cas, err := u.conflictResolver.Resolve(ctx, obj)
-		if err != nil {
-			zap.S().Debugw("Conflict Resolve Failed", "error", err.Error())
-			return err
-		}
+var latestversionsKind = schema.GroupVersionKind{Group: "metadata.sbx-central.io", Version: "v1alpha1", Kind: "LatestVersion"}
+var versionKind = schema.GroupVersionKind{Group: "metadata.sbx-central.io", Version: "v1alpha1", Kind: "LatestVersion"}
 
-		err = u.update(ctx, resolvedObj, cas)
-		if err == nil {
-			zap.S().Debug("Document Update Success")
-			return nil
-		}
+func (u *Uploader) Upload(ctx context.Context, version *redfoxV1alpha1.Version) error {
+	latestVersion := u.generateLatestVersion(version)
+
+	latestVersion, err := u.applyLatestVersion(ctx, latestVersion)
+	if err != nil {
+		return err
 	}
 
-	zap.S().Debugw("Document Creation Failed to Remote Server", "object", obj, "error", err.Error())
+	apiVersion, kind := latestversionsKind.ToAPIVersionAndKind()
+	blockOwnerDeletion := true
+	isController := true
+	version.SetOwnerReferences([]metav1.OwnerReference{
+		{
+			APIVersion:         apiVersion,
+			Kind:               kind,
+			Name:               latestVersion.Name,
+			UID:                latestVersion.UID,
+			Controller:         &isController,
+			BlockOwnerDeletion: &blockOwnerDeletion,
+		},
+	})
+	_, err = u.applyVersion(ctx, version)
 	return err
 }
 
-func (u *Uploader) create(ctx context.Context, obj *VersionObj) error {
-	doc, err := ToFoxDocument(obj)
-	if err != nil {
-		return err
+func (u *Uploader) generateLatestVersion(version *redfoxV1alpha1.Version) *redfoxV1alpha1.LatestVersion {
+	latestVersion := &redfoxV1alpha1.LatestVersion{
+		TypeMeta: metav1.TypeMeta{
+			Kind:       latestversionsKind.Kind,
+			APIVersion: version.TypeMeta.APIVersion,
+		},
+		ObjectMeta: metav1.ObjectMeta{
+			Name: fmt.Sprintf("%s-%s", version.Spec.GitRef.Repository, versions.MangleBranch(version.Spec.GitRef.Branch)),
+			Labels: map[string]string{
+				"repository": version.Spec.GitRef.Repository,
+				"branch":     versions.MangleBranch(version.Spec.GitRef.Branch),
+			},
+		},
+		Spec: redfoxV1alpha1.LatestVersionSpec{
+			GitRef: redfoxV1alpha1.LatestVersionGitRef{
+				Branch:     version.Spec.GitRef.Branch,
+				Repository: version.Spec.GitRef.Repository,
+			},
+		},
+		Status: redfoxV1alpha1.LatestVersionStatus{
+			VersionRef: redfoxV1alpha1.LatestVersionVersionRef{
+				Name: version.Name,
+			},
+		},
 	}
-
-	res, err := u.client.CreateDocument(ctx, &protos.CreateDocumentReq{
-		Document:       doc,
-		ServiceProject: u.namespace,
-	})
-	if err := fox_utils.CheckCommonResError(res, err); err != nil {
-		return fmt.Errorf("CreateDocumentFailed: %s", err.Error())
-	}
-	return nil
+	return latestVersion
 }
 
-func (u *Uploader) update(ctx context.Context, obj *VersionObj, cas *timestamppb.Timestamp) error {
-	doc, err := ToFoxDocument(obj)
+func (u *Uploader) applyVersion(ctx context.Context, version *redfoxV1alpha1.Version) (*redfoxV1alpha1.Version, error) {
+	buf, err := json.Marshal(version)
 	if err != nil {
-		return err
-	}
-
-	res, err := u.client.UpdateDocument(ctx, &protos.UpdateDocumentReq{
-		Document:        doc,
-		ServiceProject:  u.namespace,
-		CasLastModified: cas,
-	})
-	if err := fox_utils.CheckCommonResError(res, err); err != nil {
-		return fmt.Errorf("UpdateDocumentFailed: %s", err.Error())
-	}
-	return nil
-}
-
-func ToFoxDocument(obj *VersionObj) (*protos.Document, error) {
-	buf, err := json.Marshal(obj)
-	if err != nil {
-		zap.S().Debugw("Serialize Version Object Failed", "object", obj, "error", err.Error())
+		zap.S().Debugw("Failed to marshal Version object", "error", err, "name", version.Name)
 		return nil, err
 	}
 
-	return &protos.Document{
-		Id:         obj.Metadata.Name,
-		Groups:     LabelsToFoxGroups(obj.Metadata.Labels),
-		RawData:    string(buf),
-		DataType:   "map",
-		ApiVersion: "versions.sbx-central.io/v1alpha1",
-		Kind:       "Version",
-	}, nil
+	_, err = u.redfoxClient.MetadataV1alpha1().Versions(u.namespace).Patch(ctx, version.Name, types.ApplyPatchType, buf, metav1.PatchOptions{FieldManager: versionHelperManager})
+	if err != nil {
+		zap.S().Debugw("Failed to apply Version object", "error", err, "name", version.Name)
+		return nil, err
+	}
+
+	obj, err := u.redfoxClient.MetadataV1alpha1().Versions(u.namespace).Patch(ctx, version.Name, types.ApplyPatchType, buf, metav1.PatchOptions{FieldManager: versionHelperManager}, "status")
+	if err != nil {
+		zap.S().Debugw("Failed to apply status Version object", "error", err, "name", version.Name)
+		return nil, err
+	}
+
+	zap.S().Debugw("Version Object Apply Success", "applied-object", obj)
+	return obj, nil
 }
 
-func LabelsToFoxGroups(labels map[string]string) []string {
-	var groups []string
-	for key, value := range labels {
-		groups = append(groups, fmt.Sprintf("%s=", key))
-		if value != "" {
-			groups = append(groups, fmt.Sprintf("%s=%s", key, value))
-		}
+func (u *Uploader) applyLatestVersion(ctx context.Context, latestVersion *redfoxV1alpha1.LatestVersion) (*redfoxV1alpha1.LatestVersion, error) {
+	buf, err := json.Marshal(latestVersion)
+	if err != nil {
+		zap.S().Debugw("Failed to marshal LatestVersion object", "error", err, "name", latestVersion.Name)
+		return nil, err
 	}
-	return groups
+
+	_, err = u.redfoxClient.MetadataV1alpha1().LatestVersions(u.namespace).Patch(ctx, latestVersion.Name, types.ApplyPatchType, buf, metav1.PatchOptions{FieldManager: versionHelperManager})
+	if err != nil {
+		zap.S().Debugw("Failed to apply status LatestVersion object", "error", err, "name", latestVersion.Name)
+		return nil, err
+	}
+
+	obj, err := u.redfoxClient.MetadataV1alpha1().LatestVersions(u.namespace).Patch(ctx, latestVersion.Name, types.ApplyPatchType, buf, metav1.PatchOptions{FieldManager: versionHelperManager}, "status")
+	if err != nil {
+		zap.S().Debugw("Failed to apply LatestVersion object", "error", err, "name", latestVersion.Name)
+		return nil, err
+	}
+
+	zap.S().Debugw("LatestVersion Object Apply Success", "applied-object", obj)
+	return obj, nil
 }

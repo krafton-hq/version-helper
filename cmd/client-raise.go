@@ -1,7 +1,3 @@
-/*
-Copyright © 2022 NAME HERE <EMAIL ADDRESS>
-
-*/
 package cmd
 
 import (
@@ -50,7 +46,7 @@ func newClientRaiseCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&project, "project", "client", "Project Name")
 
-	cmd.Flags().StringVarP(&tmplVersionFile, "tmpl-version-file", "v", "embed:///client.yaml", "Template Version File Url (embded:///PATH, ./PATH or file:///PATH)")
+	cmd.Flags().StringVarP(&tmplVersionFile, "tmpl-version-file", "v", "embed:///version.yaml", "Template Version File Url (embded:///PATH, ./PATH or file:///PATH)")
 	cmd.Flags().StringVarP(&tmplHeaderFile, "tmpl-header-file", "d", "embed:///GeneratedVersion.h", "Template Header File Url (embded:///PATH, ./PATH or file:///PATH)")
 	cmd.Flags().StringVar(&genDir, "gen-dir", "", "Generated file output dir")
 	cmd.Flags().StringVar(&genVersionFile, "gen-version-file", "version.yaml", "Version Metadata File Name (json or yaml)")

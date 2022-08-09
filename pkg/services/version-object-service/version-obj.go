@@ -1,52 +1,61 @@
 package version_object_service
 
 import (
+	"bytes"
 	"context"
-	"fmt"
 	"io/ioutil"
+	"os"
+	"path/filepath"
 
-	fox_utils "github.com/krafton-hq/version-helper/pkg/modules/fox-utils"
+	redfoxV1alpha1 "github.com/krafton-hq/red-fox/pkg/apis/redfox/v1alpha1"
+	"github.com/krafton-hq/red-fox/pkg/generated/clientset/versioned"
+	redfoxScheme "github.com/krafton-hq/red-fox/pkg/generated/clientset/versioned/scheme"
 	path_utils "github.com/krafton-hq/version-helper/pkg/modules/path-utils"
 	version_object "github.com/krafton-hq/version-helper/pkg/modules/version-object"
 	"go.uber.org/zap"
-	"sigs.k8s.io/yaml"
+	"k8s.io/apimachinery/pkg/runtime/serializer/json"
+	"k8s.io/apimachinery/pkg/runtime/serializer/yaml"
+	"k8s.io/client-go/rest"
+	"k8s.io/client-go/tools/clientcmd"
 )
 
-func LoadVersionObj(path string) (*version_object.VersionObj, error) {
+var redfoxDecoder = redfoxScheme.Codecs.UniversalDeserializer()
+
+func LoadVersionObj(path string) (*redfoxV1alpha1.Version, error) {
 	absPath, err := path_utils.ResolvePathToAbs(path)
 	if err != nil {
-		zap.S().Debugf("Resolve Absolute Path Failed, file: %s, error: %s", path, err.Error())
+		zap.S().Debugw("Resolve Absolute Path Failed", "path", absPath, "error", err)
 		return nil, err
 	}
 	buf, err := ioutil.ReadFile(absPath)
 	if err != nil {
-		zap.S().Debugf("Read Version Object Failed, path: %s, error: %s", absPath, err.Error())
-		return nil, err
-	}
-	obj := &version_object.VersionObj{}
-	err = yaml.Unmarshal(buf, obj)
-	if err != nil {
-		zap.S().Debugw("Deserialize Version Object Failed", "raw", buf, "error", err.Error())
+		zap.S().Debugw("Read Version Object Failed", "path", absPath, "error", err)
 		return nil, err
 	}
 
-	return obj, nil
+	version := &redfoxV1alpha1.Version{}
+	if _, _, err = redfoxDecoder.Decode(buf, nil, version); err != nil {
+		zap.S().Debugw("Marshal raw data to version object failed", "error", err)
+	}
+	return version, nil
 }
 
-func SaveVersionObj(obj *version_object.VersionObj, path string) error {
-	buf, err := yaml.Marshal(obj)
+func SaveVersionObj(obj *redfoxV1alpha1.Version, path string) error {
+	buffer := &bytes.Buffer{}
+	serializer := json.NewSerializerWithOptions(yaml.DefaultMetaFactory, redfoxScheme.Scheme, redfoxScheme.Scheme, json.SerializerOptions{Yaml: true, Pretty: true, Strict: false})
+	err := serializer.Encode(obj, buffer)
 	if err != nil {
-		zap.S().Debugw("Serialize Version Object Failed", "object", obj, "error", err.Error())
+		zap.S().Debugw("Unmarshal version object to raw data failed", "error", err)
 		return err
 	}
 
 	absPath, err := path_utils.ResolvePathToAbs(path)
 	if err != nil {
-		zap.S().Debugf("Resolve Absolute Path Failed, file: %s, error: %s", path, err.Error())
+		zap.S().Debugw("Resolve Absolute Path Failed", "path", absPath, "error", err)
 		return err
 	}
 
-	err = ioutil.WriteFile(absPath, buf, 0644)
+	err = ioutil.WriteFile(absPath, buffer.Bytes(), 0644)
 	if err != nil {
 		zap.S().Infof("Write File Failed, error: %s", err.Error())
 		return err
@@ -54,38 +63,25 @@ func SaveVersionObj(obj *version_object.VersionObj, path string) error {
 	return nil
 }
 
-const foxNamespace = "SBX-VERSION"
+const redfoxNamespace = "redfox-metadata"
+const versionHelperUserAgent = "version-helper-cli"
 
-type Option struct {
-	// Required
-	ConflictResolvePolicy string
-	ConflictRetry         int
-
-	// Optional
-	FoxAddr    string
-	FoxDialTls bool
-}
-
-func UploadVersionObj(ctx context.Context, obj *version_object.VersionObj, option *Option) error {
-	foxClient, err := fox_utils.NewClient(&fox_utils.Option{
-		FoxAddr:    option.FoxAddr,
-		FoxDialTls: option.FoxDialTls,
-	})
+func UploadVersionObj(ctx context.Context, obj *redfoxV1alpha1.Version) error {
+	home, _ := os.UserHomeDir()
+	localKubeconfigPath := filepath.Join(home, ".kube", "config")
+	kubeconfig, err := clientcmd.BuildConfigFromFlags("", localKubeconfigPath)
 	if err != nil {
+		zap.S().Debugw("Read Kubeconfig failed", "path", localKubeconfigPath, "error", err)
+		return err
+	}
+	zap.S().Debugf("Select %s k8s apiserver", kubeconfig.Host)
+
+	redfoxClient, err := versioned.NewForConfig(rest.AddUserAgent(kubeconfig, versionHelperUserAgent))
+	if err != nil {
+		zap.S().Debugw("Create redfox client failed", "error", err)
 		return err
 	}
 
-	var conflictResolver version_object.ConflictResolver
-	switch option.ConflictResolvePolicy {
-	case "merge":
-		conflictResolver = version_object.NewMergeResolver(foxClient, foxNamespace)
-		break
-	case "overwrite":
-		conflictResolver = version_object.NewOverwriteResolver()
-	default:
-		return fmt.Errorf("InvalidArguments, policy: %s", option.ConflictResolvePolicy)
-	}
-
-	uploader := version_object.NewUploader(foxClient, foxNamespace, conflictResolver, option.ConflictRetry)
+	uploader := version_object.NewUploader(redfoxClient, redfoxNamespace)
 	return uploader.Upload(ctx, obj)
 }

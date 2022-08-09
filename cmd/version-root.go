@@ -4,7 +4,7 @@ import "github.com/spf13/cobra"
 
 var versionCmd = &cobra.Command{
 	Use:   "version",
-	Short: "Version Object 관리",
+	Short: "version.yaml Object 파일 관리 명령어",
 }
 
 func init() {

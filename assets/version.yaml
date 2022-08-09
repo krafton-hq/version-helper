@@ -1,0 +1,18 @@
+apiVersion: metadata.sbx-central.io/v1alpha1
+kind: Version
+metadata:
+  name: {{ .Version.FullVersion }}
+  labels:
+    repository: {{ .Git.Repository }}
+    commit: {{ .Git.Commit }}
+    branch: {{ .Version.Branch }}
+spec:
+  versionDetail:
+    displayVersion: {{ .Version.FullVersion }}
+    projectName: {{ .Project }}
+    baseVersion: {{ .Version.BaseVersion }}
+    revision: {{ .Version.Revision }}
+  gitRef:
+    repository: {{ .Git.Repository }}
+    commit: {{ .Git.Commit }}
+    branch: {{ .Git.Branch }}
