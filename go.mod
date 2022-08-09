@@ -6,7 +6,7 @@ require (
 	github.com/Masterminds/semver/v3 v3.1.1
 	github.com/Masterminds/sprig/v3 v3.2.2
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0
-	github.com/krafton-hq/red-fox v0.3.3-0.20220809083045-3c87b3978690
+	github.com/krafton-hq/red-fox v0.3.3-0.20220809103731-a704149cd213
 	github.com/spf13/cobra v1.4.0
 	github.com/thediveo/enumflag v0.10.1
 	github.krafton.com/xtrm/fox/client v1.2.0

@@ -38,7 +38,7 @@ func newDevOpsServerCommand(teamName string) *cobra.Command {
 		"ci-hint", "c", "CI 힌트")
 
 	cmd.Flags().Var(enumflag.New(&counterFlag, "Counter 타입", counter_service.CounterFlags, enumflag.EnumCaseInsensitive),
-		"counter", "Counter 타입 (local or network, default is local)")
+		"counter", "Counter 타입 (local, network or redfox, default is local)")
 	cmd.Flags().StringVar(&counterFoxAddr, "counter-fox-addr", "", "Network Counter Server gRPC Address")
 	cmd.Flags().BoolVar(&counterFoxTls, "counter-fox-secure", true, "Tls Flag to connect Network Counter Server")
 	cmd.Flags().StringVar(&counterLocalPath, "counter-local-path", "~/.versionhelper/db.json", "Local Counter DB File Path")

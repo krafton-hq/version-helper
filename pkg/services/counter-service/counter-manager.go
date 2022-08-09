@@ -14,15 +14,18 @@ const (
 	//None
 	Local CounterFlag = iota
 	Network
+	RedFox
 )
 
 var CounterFlags = map[CounterFlag][]string{
 	//None:    {},
 	Local:   {"local"},
 	Network: {"network"},
+	RedFox:  {"redfox"},
 }
 
 const foxNamespace = "SBX-VERSION"
+const redfoxNamespace = "redfox-metadata"
 
 type Option struct {
 	// Required
@@ -50,6 +53,12 @@ func NewCounter(option *Option) (build_counter.Counter, error) {
 			return nil, err
 		}
 		return build_counter.NewFoxCounter(option.Project, foxNamespace, foxClient), nil
+	case RedFox:
+		redFoxClient, err := fox_utils.NewRedFoxClient()
+		if err != nil {
+			return nil, err
+		}
+		return build_counter.NewRedFoxCounter(redFoxClient, redfoxNamespace, option.Project), nil
 	default:
 		return nil, fmt.Errorf("UnknownCounterFlag, %v", option.Flag)
 	}

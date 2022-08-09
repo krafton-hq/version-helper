@@ -4,19 +4,15 @@ import (
 	"bytes"
 	"context"
 	"io/ioutil"
-	"os"
-	"path/filepath"
 
 	redfoxV1alpha1 "github.com/krafton-hq/red-fox/pkg/apis/redfox/v1alpha1"
-	"github.com/krafton-hq/red-fox/pkg/generated/clientset/versioned"
 	redfoxScheme "github.com/krafton-hq/red-fox/pkg/generated/clientset/versioned/scheme"
+	fox_utils "github.com/krafton-hq/version-helper/pkg/modules/fox-utils"
 	path_utils "github.com/krafton-hq/version-helper/pkg/modules/path-utils"
 	version_object "github.com/krafton-hq/version-helper/pkg/modules/version-object"
 	"go.uber.org/zap"
 	"k8s.io/apimachinery/pkg/runtime/serializer/json"
 	"k8s.io/apimachinery/pkg/runtime/serializer/yaml"
-	"k8s.io/client-go/rest"
-	"k8s.io/client-go/tools/clientcmd"
 )
 
 var redfoxDecoder = redfoxScheme.Codecs.UniversalDeserializer()
@@ -64,24 +60,13 @@ func SaveVersionObj(obj *redfoxV1alpha1.Version, path string) error {
 }
 
 const redfoxNamespace = "redfox-metadata"
-const versionHelperUserAgent = "version-helper-cli"
 
 func UploadVersionObj(ctx context.Context, obj *redfoxV1alpha1.Version) error {
-	home, _ := os.UserHomeDir()
-	localKubeconfigPath := filepath.Join(home, ".kube", "config")
-	kubeconfig, err := clientcmd.BuildConfigFromFlags("", localKubeconfigPath)
+	redFoxClient, err := fox_utils.NewRedFoxClient()
 	if err != nil {
-		zap.S().Debugw("Read Kubeconfig failed", "path", localKubeconfigPath, "error", err)
-		return err
-	}
-	zap.S().Debugf("Select %s k8s apiserver", kubeconfig.Host)
-
-	redfoxClient, err := versioned.NewForConfig(rest.AddUserAgent(kubeconfig, versionHelperUserAgent))
-	if err != nil {
-		zap.S().Debugw("Create redfox client failed", "error", err)
 		return err
 	}
 
-	uploader := version_object.NewUploader(redfoxClient, redfoxNamespace)
+	uploader := version_object.NewUploader(redFoxClient, redfoxNamespace)
 	return uploader.Upload(ctx, obj)
 }
