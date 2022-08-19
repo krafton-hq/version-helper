@@ -3,6 +3,7 @@ package assets
 import "embed"
 
 // Embedded contains embedded templates
+//
 //go:embed *
 var Embedded embed.FS
 

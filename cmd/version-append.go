@@ -3,7 +3,7 @@ package cmd
 import (
 	"errors"
 
-	redfoxV1alpha1 "github.com/krafton-hq/red-fox/pkg/apis/redfox/v1alpha1"
+	redfoxV1alpha1 "github.com/krafton-hq/redfox/pkg/apis/redfox/v1alpha1"
 	version_object_service "github.com/krafton-hq/version-helper/pkg/services/version-object-service"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"

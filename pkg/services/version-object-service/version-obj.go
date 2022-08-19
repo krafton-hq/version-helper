@@ -5,8 +5,8 @@ import (
 	"context"
 	"io/ioutil"
 
-	redfoxV1alpha1 "github.com/krafton-hq/red-fox/pkg/apis/redfox/v1alpha1"
-	redfoxScheme "github.com/krafton-hq/red-fox/pkg/generated/clientset/versioned/scheme"
+	redfoxV1alpha1 "github.com/krafton-hq/redfox/pkg/apis/redfox/v1alpha1"
+	redfoxScheme "github.com/krafton-hq/redfox/pkg/generated/clientset/versioned/scheme"
 	fox_utils "github.com/krafton-hq/version-helper/pkg/modules/fox-utils"
 	path_utils "github.com/krafton-hq/version-helper/pkg/modules/path-utils"
 	version_object "github.com/krafton-hq/version-helper/pkg/modules/version-object"

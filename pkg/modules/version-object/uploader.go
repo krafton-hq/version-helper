@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 
-	redfoxV1alpha1 "github.com/krafton-hq/red-fox/pkg/apis/redfox/v1alpha1"
-	redfoxClientset "github.com/krafton-hq/red-fox/pkg/generated/clientset/versioned"
+	redfoxV1alpha1 "github.com/krafton-hq/redfox/pkg/apis/redfox/v1alpha1"
+	redfoxClientset "github.com/krafton-hq/redfox/pkg/generated/clientset/versioned"
 	"github.com/krafton-hq/version-helper/pkg/modules/versions"
 	"go.uber.org/zap"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
