@@ -54,13 +54,21 @@ func (u *Uploader) Upload(ctx context.Context, version *redfoxV1alpha1.Version) 
 }
 
 func (u *Uploader) generateLatestVersion(version *redfoxV1alpha1.Version) *redfoxV1alpha1.LatestVersion {
+	var latestVersionName = ""
+
+	if version.Spec.VersionDetail.SubProjectName == "" {
+		latestVersionName = fmt.Sprintf("%s-%s", version.Spec.VersionDetail.ProjectName, versions.MangleBranch(version.Spec.GitRef.Branch))
+	} else {
+		latestVersionName = fmt.Sprintf("%s-%s-%s", version.Spec.VersionDetail.ProjectName, version.Spec.VersionDetail.SubProjectName, versions.MangleBranch(version.Spec.GitRef.Branch))
+	}
+
 	latestVersion := &redfoxV1alpha1.LatestVersion{
 		TypeMeta: metav1.TypeMeta{
 			Kind:       latestversionsKind.Kind,
 			APIVersion: version.TypeMeta.APIVersion,
 		},
 		ObjectMeta: metav1.ObjectMeta{
-			Name: fmt.Sprintf("%s-%s", version.Spec.GitRef.Repository, versions.MangleBranch(version.Spec.GitRef.Branch)),
+			Name: latestVersionName,
 			Labels: map[string]string{
 				"repository": version.Spec.GitRef.Repository,
 				"branch":     versions.MangleBranch(version.Spec.GitRef.Branch),
