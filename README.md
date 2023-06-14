@@ -14,7 +14,7 @@
 # Commands
 ## Client Commands
 ```shell
-# Generate Version Metadata Client Team 
+# Generate Version Metadata Client Team
 $ versionhelper client raise
 $ versionhelper client set <semver> <count>
 # Client Specific Parameters
@@ -27,17 +27,17 @@ $ versionhelper client set <semver> <count>
 
 ## Server and DevOps Commands
 ```shell
-# Generate Version Metadata for Server Team 
+# Generate Version Metadata for Server Team
 $ versionhelper server
 # Server Specific Parameters
 --override-project : Override Project Name (default is repository-name)
 --gen-file : Output File Name (default version.yaml)
 -t, --tmpl-file : Template File Url (embded:///PATH, ./PATH or file:///PATH) (default "embed:///server.yaml")
 
-# Generate Version Metadata for DevOps Team 
+# Generate Version Metadata for DevOps Team
 $ versionhelper devops
 # Server Specific Parameters
---override-project : Override Project Name (default is repository-name) 
+--override-project : Override Project Name (default is repository-name)
 --gen-file : Output File Name (default version.yaml)
 -t, --tmpl-file : Template File Url (embded:///PATH, ./PATH or file:///PATH) (default "embed:///devops.yaml")
 ```
@@ -50,10 +50,8 @@ $ versionhelper devops
 --json-log : When Enable this, Print Log Message as Json (default false)
 
 --ci-hint : (default "", none means automatically detect what CI uses)
---counter : Build Revision Counter Type (local or network, default is local)
+--counter : Build Revision Counter Type (local or redfox, default is local)
 --counter-local-path : Local Counter DB File Path (default "~/.versionhelper/db.json")
---counter-fox-addr : Network Counter gRPC Server Address (default "")
---counter-fox-secure : Use Tls Flag to Connect Network Counter Server (default true)
 --gen-dir : Output Files Directory (default is same as workdirectory)
 ```
 

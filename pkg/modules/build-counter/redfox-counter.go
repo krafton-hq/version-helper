@@ -11,6 +11,8 @@ import (
 	"k8s.io/apimachinery/pkg/runtime/schema"
 )
 
+const MaxUint = ^uint(0)
+
 type RedFoxCounter struct {
 	redfoxClient redfoxClientset.Interface
 	namespace    string

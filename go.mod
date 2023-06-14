@@ -9,8 +9,6 @@ require (
 	github.com/krafton-hq/redfox v0.4.1
 	github.com/spf13/cobra v1.4.0
 	github.com/thediveo/enumflag v0.10.1
-	github.krafton.com/xtrm/fox/client v1.2.0
-	github.krafton.com/xtrm/fox/core v0.0.0-coreunpublished
 	go.uber.org/zap v1.21.0
 	google.golang.org/grpc v1.43.0
 	k8s.io/apimachinery v0.24.1

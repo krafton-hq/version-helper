@@ -13,15 +13,13 @@ type CounterFlag enumflag.Flag
 const (
 	//None
 	Local CounterFlag = iota
-	Network
 	RedFox
 )
 
 var CounterFlags = map[CounterFlag][]string{
 	//None:    {},
-	Local:   {"local"},
-	Network: {"network"},
-	RedFox:  {"redfox"},
+	Local:  {"local"},
+	RedFox: {"redfox"},
 }
 
 const foxNamespace = "SBX-VERSION"
@@ -44,15 +42,6 @@ func NewCounter(option *Option) (build_counter.Counter, error) {
 	//	return build_counter.NewLocalCounter(option.LocalPath, option.Project)
 	case Local:
 		return build_counter.NewLocalCounter(option.LocalPath, option.Project)
-	case Network:
-		foxClient, err := fox_utils.NewClient(&fox_utils.Option{
-			FoxAddr:    option.FoxAddr,
-			FoxDialTls: option.FoxDialTls,
-		})
-		if err != nil {
-			return nil, err
-		}
-		return build_counter.NewFoxCounter(option.Project, foxNamespace, foxClient), nil
 	case RedFox:
 		redFoxClient, err := fox_utils.NewRedFoxClient()
 		if err != nil {
