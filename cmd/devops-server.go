@@ -124,4 +124,5 @@ func newDevOpsServerCommand(teamName string) *cobra.Command {
 func init() {
 	rootCmd.AddCommand(newDevOpsServerCommand("devops"))
 	rootCmd.AddCommand(newDevOpsServerCommand("server"))
+	rootCmd.AddCommand(newDevOpsServerCommand("common"))
 }
