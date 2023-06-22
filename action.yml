@@ -1,0 +1,50 @@
+name: 'version-helper'
+description: 'setup and generate version using version-helper'
+inputs:
+  version:
+    description: 'download version'
+    required: false
+    default: 'v0.6.0'
+  counter:
+    description: 'target counter'
+    required: false
+    default: 'redfox'
+  debug:
+    description: 'debug mode'
+    required: false
+    default: 'false'
+  labels:
+    description: 'append labels to version ex)aa=zz,bb=cc'
+    required: false
+    default: ''
+  upload:
+    description: 'upload version.yaml to redfox'
+    required: false
+    default: 'true'
+outputs:
+  version:
+    description: 'version'
+    value: ${{ steps.generate-version.outputs.version }}
+runs:
+  using: "composite"
+  steps:
+    - id: generate-version
+      run: |
+        set -euox pipefail
+        curl -L https://github.com/krafton-hq/version-helper/releases/download/${{ inputs.version }}/versionhelper_${{ inputs.version }}_linux_amd64.tar.gz --output versionhelper.tar.gz
+        tar -xzf versionhelper.tar.gz
+        sudo mv versionhelper /usr/local/bin/versionhelper
+        rm versionhelper.tar.gz
+
+        versionhelper common --counter={{ inputs.counter }} --debug={{ inputs.debug }}
+
+        if ${{ inputs.labels }} != '' ; then
+          versionhelper version append --labels=${{ inputs.labels }} --debug={{ inputs.debug }}
+        fi
+
+        echo "version=$(cat version.yaml)" >> $GITHUB_OUTPUT
+
+        if ${{ inputs.upload }} == 'true' ; then
+          versionhelper version upload --debug={{ inputs.debug }}
+        fi
+      shell: bash
