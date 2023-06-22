@@ -39,15 +39,15 @@ runs:
         sudo mv versionhelper /usr/local/bin/versionhelper
         rm versionhelper.tar.gz
 
-        echo "version=$(versionhelper common --counter={{ inputs.counter }} --debug={{ inputs.debug }})" >> $GITHUB_OUTPUT
+        echo "version=$(versionhelper common --counter=${{ inputs.counter }} --debug=${{ inputs.debug }})" >> $GITHUB_OUTPUT
 
         if ${{ inputs.labels }} != '' ; then
-          versionhelper version append --labels=${{ inputs.labels }} --debug={{ inputs.debug }}
+          versionhelper version append --labels=${{ inputs.labels }} --debug=${{ inputs.debug }}
         fi
 
         echo "version-detail=$(cat version.yaml)" >> $GITHUB_OUTPUT
 
         if ${{ inputs.upload }} == 'true' ; then
-          versionhelper version upload --debug={{ inputs.debug }}
+          versionhelper version upload --debug=${{ inputs.debug }}
         fi
       shell: bash
