@@ -25,9 +25,6 @@ outputs:
   version:
     description: 'version tag'
     value: ${{ steps.generate-version.outputs.version }}
-  version-detail:
-    description: 'version data from yaml'
-    value: ${{ steps.generate-version.outputs.version-detail }}
 runs:
   using: "composite"
   steps:
@@ -44,8 +41,6 @@ runs:
         if ${{ inputs.labels }} != '' ; then
           versionhelper version append --labels=${{ inputs.labels }} --debug=${{ inputs.debug }}
         fi
-
-        echo "version-detail=$(cat version.yaml)" >> $GITHUB_OUTPUT
 
         if ${{ inputs.upload }} == 'true' ; then
           versionhelper version upload --debug=${{ inputs.debug }}
