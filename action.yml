@@ -38,11 +38,11 @@ runs:
 
         echo "version=$(versionhelper common --counter=${{ inputs.counter }} --debug=${{ inputs.debug }})" >> $GITHUB_OUTPUT
 
-        if ${{ inputs.labels }} != '' ; then
+        if [[ "${{ inputs.labels }}" != "" ]] ; then
           versionhelper version append --labels=${{ inputs.labels }} --debug=${{ inputs.debug }}
         fi
 
-        if ${{ inputs.upload }} == 'true' ; then
+        if [[ "${{ inputs.upload }}" == "true" ]] ; then
           versionhelper version upload --debug=${{ inputs.debug }}
         fi
       shell: bash
