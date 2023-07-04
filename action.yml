@@ -36,7 +36,7 @@ runs:
         sudo mv versionhelper /usr/local/bin/versionhelper
         rm versionhelper.tar.gz
 
-        echo "version=$(versionhelper common --counter=${{ inputs.counter }} --debug=${{ inputs.debug }})" >> $GITHUB_OUTPUT
+        echo "::set-output name=version::$(versionhelper common --counter=${{ inputs.counter }} --debug=${{ inputs.debug }})"
 
         if [[ "${{ inputs.labels }}" != "" ]] ; then
           versionhelper version append --labels=${{ inputs.labels }} --debug=${{ inputs.debug }}
