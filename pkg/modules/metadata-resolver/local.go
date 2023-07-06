@@ -35,6 +35,10 @@ func (r *LocalResolver) ResolveBuildMetadata() (*BuildMetadata, error) {
 		return nil, errors.New(fmt.Sprintf("TagParseError: %s", err.Error()))
 	}
 
+	if tag == "" {
+		tag = "v0.0.0"
+	}
+
 	lastVersion, err := semver.NewVersion(tag)
 	if err != nil {
 		return nil, errors.New(fmt.Sprintf("SemverParseError: %s", err.Error()))

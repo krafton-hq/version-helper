@@ -85,9 +85,6 @@ func GetRepositoryFromEnv(env string) (string, error) {
 func ParseRepositoryName(url string) (string, error) {
 	args := strings.Split(url, "/")
 	rawRepo := args[len(args)-1]
-	if !strings.HasSuffix(rawRepo, ".git") {
-		return "", fmt.Errorf("UnexpectedRepoUrl, Url: %s", url)
-	}
 
 	return strings.TrimSuffix(rawRepo, ".git"), nil
 }
