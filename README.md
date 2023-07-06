@@ -57,6 +57,6 @@ $ versionhelper devops
 
 ## Edit Metadata Commands
 ```shell
-$ versionhelper metadata append --platform=<> --target=<> --artifact-type=<> --uri=<> [--file=<>]
-$ versionhelper metadata upload [--confilct-resolve-policy=<merge|overwrite> --conflict-retry=<int> --upload-fox-addr=<> --upload-fox-secure=<> --file=<>]
+$ versionhelper version append --platform=<> --target=<> --artifact-type=<> --uri=<> [--file=<>]
+$ versionhelper version upload [--confilct-resolve-policy=<merge|overwrite> --conflict-retry=<int> --upload-fox-addr=<> --upload-fox-secure=<> --file=<>]
 ```
