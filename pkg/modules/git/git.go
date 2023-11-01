@@ -42,6 +42,11 @@ func GetTag() (string, error) {
 	if err != nil {
 		return "", err
 	}
+
+	if trim(stdout) == "" {
+		return "v0.0.0", nil
+	}
+
 	return trim(stdout), nil
 }
 

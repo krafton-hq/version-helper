@@ -3,7 +3,10 @@ package version_object_service
 import (
 	"bytes"
 	"context"
+	"errors"
 	"io/ioutil"
+
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	redfoxV1alpha1 "github.com/krafton-hq/redfox/pkg/apis/redfox/v1alpha1"
 	redfoxScheme "github.com/krafton-hq/redfox/pkg/generated/clientset/versioned/scheme"
@@ -69,4 +72,36 @@ func UploadVersionObj(ctx context.Context, obj *redfoxV1alpha1.Version) error {
 
 	uploader := version_object.NewUploader(redFoxClient, redfoxNamespace)
 	return uploader.Upload(ctx, obj)
+}
+
+func UploadLatestVersion(ctx context.Context, obj *redfoxV1alpha1.LatestVersion, namespace string) (*redfoxV1alpha1.LatestVersion, error) {
+	redFoxClient, err := fox_utils.NewRedFoxClient()
+	if err != nil {
+		return nil, err
+	}
+
+	if namespace == "" {
+		return nil, errors.New("namespace is empty")
+	}
+
+	uploader := version_object.NewUploader(redFoxClient, namespace)
+	return uploader.ApplyLatestVersion(ctx, obj)
+}
+
+func GetLatestVersion(ctx context.Context, name, namespace string) (*redfoxV1alpha1.LatestVersion, error) {
+	redFoxClient, err := fox_utils.NewRedFoxClient()
+	if err != nil {
+		return nil, err
+	}
+
+	if namespace == "" {
+		return nil, errors.New("namespace is empty")
+	}
+
+	lv, err := redFoxClient.MetadataV1alpha1().LatestVersions(namespace).Get(ctx, name, metav1.GetOptions{})
+	if err != nil {
+		return nil, err
+	}
+
+	return lv, nil
 }

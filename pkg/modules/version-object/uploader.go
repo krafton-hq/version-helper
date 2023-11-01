@@ -31,7 +31,7 @@ var versionKind = schema.GroupVersionKind{Group: "metadata.sbx-central.io", Vers
 func (u *Uploader) Upload(ctx context.Context, version *redfoxV1alpha1.Version) error {
 	latestVersion := u.generateLatestVersion(version)
 
-	latestVersion, err := u.applyLatestVersion(ctx, latestVersion)
+	latestVersion, err := u.ApplyLatestVersion(ctx, latestVersion)
 	if err != nil {
 		return err
 	}
@@ -112,7 +112,7 @@ func (u *Uploader) applyVersion(ctx context.Context, version *redfoxV1alpha1.Ver
 	return obj, nil
 }
 
-func (u *Uploader) applyLatestVersion(ctx context.Context, latestVersion *redfoxV1alpha1.LatestVersion) (*redfoxV1alpha1.LatestVersion, error) {
+func (u *Uploader) ApplyLatestVersion(ctx context.Context, latestVersion *redfoxV1alpha1.LatestVersion) (*redfoxV1alpha1.LatestVersion, error) {
 	buf, err := json.Marshal(latestVersion)
 	if err != nil {
 		zap.S().Debugw("Failed to marshal LatestVersion object", "error", err, "name", latestVersion.Name)
