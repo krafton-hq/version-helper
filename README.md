@@ -42,6 +42,41 @@ $ versionhelper devops
 -t, --tmpl-file : Template File Url (embded:///PATH, ./PATH or file:///PATH) (default "embed:///devops.yaml")
 ```
 
+## latestversion Commands
+```shell
+# get or update latestversion data
+$ versionhelper latestversion
+
+# get 
+Usage:
+  versionhelper latestversion get {namePrefix} [flags]
+
+Examples:
+latestversion get MapDLC
+
+Flags:
+  -b, --branch string       branch name
+  -c, --ci-hint CI 이름   CI 힌트 (default none)
+  -h, --help                help for get
+  -n, --namespace string    [REQUIRED] namespace name (ex: mapdlc-metadata)
+  -r, --repo string         repository name
+
+# update
+Usage:
+  versionhelper latestversion update {namePrefix} {version} [flags]
+
+Examples:
+latestversion update MapDLC abc123
+
+Flags:
+  -b, --branch string          branch name
+  -c, --ci-hint CI 이름      CI 힌트 (default none)
+  -h, --help                   help for update
+  -l, --label stringToString   latest version label (ex: hello=world) (default [])
+  -n, --namespace string       [REQUIRED] namespace name (ex: mapdlc-metadata)
+  -r, --repo string            repository name
+```
+
 ## Parameters
 ```yaml
 --help : Help for versionhelper
