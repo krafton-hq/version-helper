@@ -31,7 +31,7 @@ func latestVersionUpdateCommand() *cobra.Command {
 		Use:     "update {namePrefix} {version}",
 		Args:    cobra.MatchAll(cobra.ExactArgs(2), cobra.OnlyValidArgs),
 		Short:   "최신 버전 추가 또는 업데이트 명령어",
-		Example: "latestversion update MapDLC abc123",
+		Example: "latestversion update mapdlc abc123",
 	}
 
 	cmd.Flags().VarP(enumflag.New(&ciHint, "CI 이름", meta_resolver_service.CiFlags, enumflag.EnumCaseInsensitive),
@@ -89,11 +89,11 @@ func latestVersionUpdateCommand() *cobra.Command {
 			return
 		}
 
-		objName := namePrefix + "-" + repo + "-" + branch
+		objName := namePrefix + "-" + strings.ToLower(repo) + "-" + strings.ToLower(strings.ReplaceAll(branch, "/", "-"))
 
 		ctx := context.Background()
 
-		labels["branch"] = strings.ReplaceAll(branch, "/", "-")
+		labels["branch"] = strings.ToLower(strings.ReplaceAll(branch, "/", "-"))
 		labels["repository"] = repo
 
 		lv := &redfoxV1alpha1.LatestVersion{

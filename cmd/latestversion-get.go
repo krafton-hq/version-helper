@@ -3,6 +3,7 @@ package cmd
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	metadata_resolver "github.com/krafton-hq/version-helper/pkg/modules/metadata-resolver"
 	meta_resolver_service "github.com/krafton-hq/version-helper/pkg/services/meta-resolver-service"
@@ -26,7 +27,7 @@ func latestVersionGetCommand() *cobra.Command {
 		Use:     "get {namePrefix}",
 		Args:    cobra.MatchAll(cobra.ExactArgs(1), cobra.OnlyValidArgs),
 		Short:   "최신 버전 조회 명령어",
-		Example: "latestversion get MapDLC",
+		Example: "latestversion get mapdlc",
 	}
 
 	cmd.Flags().VarP(enumflag.New(&ciHint, "CI 이름", meta_resolver_service.CiFlags, enumflag.EnumCaseInsensitive),
@@ -82,7 +83,7 @@ func latestVersionGetCommand() *cobra.Command {
 			return
 		}
 
-		objName := namePrefix + "-" + repo + "-" + branch
+		objName := namePrefix + "-" + strings.ToLower(repo) + "-" + strings.ToLower(strings.ReplaceAll(branch, "/", "-"))
 
 		ctx := context.Background()
 
