@@ -52,7 +52,7 @@ Usage:
   versionhelper latestversion get {namePrefix} [flags]
 
 Examples:
-latestversion get MapDLC
+latestversion get mapdlc
 
 Flags:
   -b, --branch string       branch name
@@ -66,7 +66,7 @@ Usage:
   versionhelper latestversion update {namePrefix} {version} [flags]
 
 Examples:
-latestversion update MapDLC abc123
+latestversion update mapdlc abc123
 
 Flags:
   -b, --branch string          branch name
