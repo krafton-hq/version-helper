@@ -95,3 +95,6 @@ Flags:
 $ versionhelper version append --platform=<> --target=<> --artifact-type=<> --uri=<> [--file=<>]
 $ versionhelper version upload [--confilct-resolve-policy=<merge|overwrite> --conflict-retry=<int> --upload-fox-addr=<> --upload-fox-secure=<> --file=<>]
 ```
+
+## cf
+if you redfox server use, add environment set REDFOX_HOST.
