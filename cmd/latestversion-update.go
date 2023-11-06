@@ -46,7 +46,7 @@ func latestVersionUpdateCommand() *cobra.Command {
 		versionRef = args[1]
 
 		var metadata *metadata_resolver.BuildMetadata
-		if repo == "" && branch == "" {
+		if repo == "" || branch == "" {
 			resolver, err := GetMetaResolver(ciHint)
 			if err != nil {
 				zap.S().Infof("Get Resolver Failed, error: %s", err.Error())
