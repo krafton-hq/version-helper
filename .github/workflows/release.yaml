@@ -30,7 +30,7 @@ jobs:
       - name: Login GHES
         run: |
           set -eux
-          echo "machine github.krafton.com login sbx-cicd-bot password ${{ secrets.SBX_DEVOPS_GITHUB_ENTERPRISE_TOKEN }}" >> ~/.netrc
+          echo "machine github.krafton.com login sbx-cicd-bot password ${{ secrets.OVDR_DEVOPS_GITHUB_ENTERPRISE_TOKEN }}" >> ~/.netrc
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2
         with:
