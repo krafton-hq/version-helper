@@ -119,7 +119,8 @@ func (u *Uploader) ApplyLatestVersion(ctx context.Context, latestVersion *redfox
 		return nil, err
 	}
 
-	_, err = u.redfoxClient.MetadataV1alpha1().LatestVersions(u.namespace).Patch(ctx, latestVersion.Name, types.ApplyPatchType, buf, metav1.PatchOptions{FieldManager: versionHelperManager})
+	forcePatchOption := true
+	_, err = u.redfoxClient.MetadataV1alpha1().LatestVersions(u.namespace).Patch(ctx, latestVersion.Name, types.ApplyPatchType, buf, metav1.PatchOptions{FieldManager: versionHelperManager, Force: &forcePatchOption})
 	if err != nil {
 		zap.S().Debugw("Failed to apply status LatestVersion object", "error", err, "name", latestVersion.Name)
 		return nil, err
