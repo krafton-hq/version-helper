@@ -1,5 +1,14 @@
 # version-helper
 
+## required
+add file 'semver.versionhelper' in root path. content is like below
+```shell
+0.3.2
+```
+if you are not set, searching by git tag history and get latest version.
+not set tag too, get 0.0.0 version.
+
+
 ----------------
 
 # Version Styles
@@ -47,7 +56,7 @@ $ versionhelper devops
 # get or update latestversion data
 $ versionhelper latestversion
 
-# get 
+# get
 Usage:
   versionhelper latestversion get {namePrefix} [flags]
 

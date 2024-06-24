@@ -38,16 +38,24 @@ func GetBranch() (string, error) {
 }
 
 func GetTag() (string, error) {
-	stdout, _, _, err := execute(context.TODO(), "git", "describe", "--tags", "--abbrev=0", "--match=v*")
-	if err != nil {
+	data, err := os.ReadFile("semver.versionhelper")
+	if err != nil && errors.Is(err, os.ErrNotExist) {
+
+		stdout, _, _, err := execute(context.TODO(), "git", "describe", "--tags", "--abbrev=0", "--match=v*")
+		if err != nil {
+			return "", err
+		}
+
+		if trim(stdout) == "" {
+			return "v0.0.0", nil
+		}
+
+		return trim(stdout), nil
+	} else if err != nil {
 		return "", err
 	}
 
-	if trim(stdout) == "" {
-		return "v0.0.0", nil
-	}
-
-	return trim(stdout), nil
+	return trim(string(data)), nil
 }
 
 func GetRepository() (string, error) {

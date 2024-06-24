@@ -4,7 +4,7 @@ inputs:
   version:
     description: 'download version'
     required: false
-    default: 'v0.6.0'
+    default: 'v0.8.0'
   counter:
     description: 'target counter'
     required: false
