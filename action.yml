@@ -47,7 +47,7 @@ runs:
 
     - id: generate-version
       run: |
-        sudo mv vhbin/versionhepler /usr/local/bin/versionhelper
+        sudo mv vhbin/versionhelper /usr/local/bin/versionhelper
 
         echo "version=$(versionhelper common --counter=${{ inputs.counter }} --debug=${{ inputs.debug }})" >> $GITHUB_OUTPUT
 
