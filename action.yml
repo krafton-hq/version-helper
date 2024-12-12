@@ -45,6 +45,13 @@ runs:
         rm versionhelper.tar.gz
       shell: bash
 
+    - id: save-cache
+      if : steps.bin-cache.outputs.cache-hit != 'true'
+      uses: actions/cache/save@v4
+      with:
+        path: vhbin/versionhelper
+        key: ${{ runner.os }}-versionhelper-${{ inputs.version }}
+
     - id: generate-version
       run: |
         sudo mv vhbin/versionhelper /usr/local/bin/versionhelper
