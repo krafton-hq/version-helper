@@ -4,7 +4,7 @@ inputs:
   version:
     description: 'download version'
     required: false
-    default: 'v0.8.7'
+    default: 'v0.8.8'
   counter:
     description: 'target counter'
     required: false
@@ -17,6 +17,10 @@ inputs:
     description: 'append labels to version ex)aa=zz,bb=cc'
     required: false
     default: ''
+  setup:
+    description: 'setup version-helper'
+    required: false
+    default: 'true'
   generate:
     description: 'generate version.yaml'
     required: false
@@ -33,13 +37,14 @@ runs:
   using: "composite"
   steps:
     - id: bin-cache
+      if: inputs.setup == 'true'
       uses: actions/cache@v4
       with:
         path: vhbin/versionhelper
         key: ${{ runner.os }}-versionhelper-${{ inputs.version }}
 
     - id: download-binary
-      if: steps.bin-cache.outputs.cache-hit != 'true'
+      if: inputs.setup == 'true' && steps.bin-cache.outputs.cache-hit != 'true'
       run: |
         set -euox pipefail
         curl -L https://github.com/krafton-hq/version-helper/releases/download/${{ inputs.version }}/versionhelper_${{ inputs.version }}_linux_amd64.tar.gz --output versionhelper.tar.gz
@@ -50,13 +55,14 @@ runs:
       shell: bash
 
     - id: save-cache
-      if: steps.bin-cache.outputs.cache-hit != 'true'
+      if: inputs.setup == 'true' && steps.bin-cache.outputs.cache-hit != 'true'
       uses: actions/cache/save@v4
       with:
         path: vhbin/versionhelper
         key: ${{ runner.os }}-versionhelper-${{ inputs.version }}
 
     - id: setup-binary
+      if: inputs.setup == 'true'
       run: |
         sudo mv vhbin/versionhelper /usr/local/bin/versionhelper
         versionhelper --version
