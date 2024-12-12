@@ -4,7 +4,7 @@ inputs:
   version:
     description: 'download version'
     required: false
-    default: 'v0.8.5'
+    default: 'v0.8.7'
   counter:
     description: 'target counter'
     required: false
@@ -17,6 +17,10 @@ inputs:
     description: 'append labels to version ex)aa=zz,bb=cc'
     required: false
     default: ''
+  generate:
+    description: 'generate version.yaml'
+    required: false
+    default: 'true'
   upload:
     description: 'upload version.yaml to redfox'
     required: false
@@ -35,7 +39,7 @@ runs:
         key: ${{ runner.os }}-versionhelper-${{ inputs.version }}
 
     - id: download-binary
-      if : steps.bin-cache.outputs.cache-hit != 'true'
+      if: steps.bin-cache.outputs.cache-hit != 'true'
       run: |
         set -euox pipefail
         curl -L https://github.com/krafton-hq/version-helper/releases/download/${{ inputs.version }}/versionhelper_${{ inputs.version }}_linux_amd64.tar.gz --output versionhelper.tar.gz
@@ -46,24 +50,33 @@ runs:
       shell: bash
 
     - id: save-cache
-      if : steps.bin-cache.outputs.cache-hit != 'true'
+      if: steps.bin-cache.outputs.cache-hit != 'true'
       uses: actions/cache/save@v4
       with:
         path: vhbin/versionhelper
         key: ${{ runner.os }}-versionhelper-${{ inputs.version }}
 
-    - id: generate-version
+    - id: setup-binary
       run: |
         sudo mv vhbin/versionhelper /usr/local/bin/versionhelper
+        versionhelper --version
+      shell: bash
 
+    - id: generate-version
+      if: inputs.generate == 'true'
+      run: |
         echo "version=$(versionhelper common --counter=${{ inputs.counter }} --debug=${{ inputs.debug }})" >> $GITHUB_OUTPUT
         cat version.yaml
+      shell: bash
 
-        if [[ "${{ inputs.labels }}" != "" ]] ; then
-          versionhelper version append --labels=${{ inputs.labels }} --debug=${{ inputs.debug }}
-        fi
+    - id: set-labels
+      if: inputs.labels != ''
+      run: |
+        versionhelper version append --labels=${{ inputs.labels }} --debug=${{ inputs.debug }}
+      shell: bash
 
-        if [[ "${{ inputs.upload }}" == "true" ]] ; then
-          versionhelper version upload --debug=${{ inputs.debug }}
-        fi
+    - id: upload-version
+      if: inputs.upload == 'true'
+      run: |
+        versionhelper version upload --debug=${{ inputs.debug }}
       shell: bash
