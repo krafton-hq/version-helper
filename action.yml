@@ -4,7 +4,7 @@ inputs:
   version:
     description: 'download version'
     required: false
-    default: 'v0.8.3'
+    default: 'v0.8.5'
   counter:
     description: 'target counter'
     required: false
@@ -41,7 +41,7 @@ runs:
         curl -L https://github.com/krafton-hq/version-helper/releases/download/${{ inputs.version }}/versionhelper_${{ inputs.version }}_linux_amd64.tar.gz --output versionhelper.tar.gz
         tar -xzf versionhelper.tar.gz
         mkdir -p vhbin
-        sudo mv versionhelper vhbin/versionhelper
+        sudo mv versionhelper vhbin/
         rm versionhelper.tar.gz
       shell: bash
 
