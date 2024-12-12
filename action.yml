@@ -50,6 +50,7 @@ runs:
         sudo mv vhbin/versionhelper /usr/local/bin/versionhelper
 
         echo "version=$(versionhelper common --counter=${{ inputs.counter }} --debug=${{ inputs.debug }})" >> $GITHUB_OUTPUT
+        cat version.yaml
 
         if [[ "${{ inputs.labels }}" != "" ]] ; then
           versionhelper version append --labels=${{ inputs.labels }} --debug=${{ inputs.debug }}
