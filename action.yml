@@ -4,7 +4,7 @@ inputs:
   version:
     description: 'download version'
     required: false
-    default: 'v0.8.2'
+    default: 'v0.8.3'
   counter:
     description: 'target counter'
     required: false
@@ -28,13 +28,26 @@ outputs:
 runs:
   using: "composite"
   steps:
-    - id: generate-version
+    - id: bin-cache
+      uses: actions/cache@v4
+      with:
+        path: vhbin/versionhelper
+        key: ${{ runner.os }}-versionhelper-${{ inputs.version }}
+
+    - id: download-binary
+      if : steps.bin-cache.outputs.cache-hit != 'true'
       run: |
         set -euox pipefail
         curl -L https://github.com/krafton-hq/version-helper/releases/download/${{ inputs.version }}/versionhelper_${{ inputs.version }}_linux_amd64.tar.gz --output versionhelper.tar.gz
         tar -xzf versionhelper.tar.gz
-        sudo mv versionhelper /usr/local/bin/versionhelper
-        rm versionhelper.tar.gz
+        mkdir -p vhbin
+        sudo mv versionhelper vhbin/versionhelper
+        rm versionhelper.tar.gz versionhelper
+      shell: bash
+
+    - id: generate-version
+      run: |
+        sudo mv vhbin/versionhepler /usr/local/bin/versionhelper
 
         echo "version=$(versionhelper common --counter=${{ inputs.counter }} --debug=${{ inputs.debug }})" >> $GITHUB_OUTPUT
 
