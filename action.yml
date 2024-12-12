@@ -42,7 +42,7 @@ runs:
         tar -xzf versionhelper.tar.gz
         mkdir -p vhbin
         sudo mv versionhelper vhbin/versionhelper
-        rm versionhelper.tar.gz versionhelper
+        rm versionhelper.tar.gz
       shell: bash
 
     - id: generate-version
