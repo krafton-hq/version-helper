@@ -10,7 +10,8 @@ import (
 
 func newVersionUploadCommand() *cobra.Command {
 	var (
-		objectFile string
+		objectFile  string
+		forceLatest bool
 	)
 
 	cmd := &cobra.Command{
@@ -19,6 +20,7 @@ func newVersionUploadCommand() *cobra.Command {
 	}
 
 	cmd.Flags().StringVar(&objectFile, "file", "version.yaml", "Version Object File Path")
+	cmd.Flags().BoolVar(&forceLatest, "force-latest", false, "LatestVersion 이 더 높은 revision 을 가리켜도 이번 버전으로 덮어쓴다")
 
 	cmd.Run = func(cmd *cobra.Command, args []string) {
 		ctx := context.Background()
@@ -29,7 +31,7 @@ func newVersionUploadCommand() *cobra.Command {
 			return
 		}
 
-		err = version_object_service.UploadVersionObj(ctx, obj)
+		err = version_object_service.UploadVersionObj(ctx, obj, forceLatest)
 		if err != nil {
 			zap.S().Infof("Upload Version Object Failed, error: %s", err.Error())
 			SetExitCode(ExitCodeError)

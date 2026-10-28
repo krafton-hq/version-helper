@@ -64,13 +64,13 @@ func SaveVersionObj(obj *redfoxV1alpha1.Version, path string) error {
 
 const redfoxNamespace = "redfox-metadata"
 
-func UploadVersionObj(ctx context.Context, obj *redfoxV1alpha1.Version) error {
+func UploadVersionObj(ctx context.Context, obj *redfoxV1alpha1.Version, forceLatest bool) error {
 	redFoxClient, err := fox_utils.NewRedFoxClient()
 	if err != nil {
 		return err
 	}
 
-	uploader := version_object.NewUploader(redFoxClient, redfoxNamespace)
+	uploader := version_object.NewUploader(redFoxClient, redfoxNamespace).WithForceLatest(forceLatest)
 	return uploader.Upload(ctx, obj)
 }
 
